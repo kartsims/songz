@@ -3,7 +3,15 @@ var router = express.Router();
 
 /* GET home page. */
 router.get('/', function(req, res) {
-  res.render('index', { title: 'Express' });
+  
+  // thèmes en dur, à extraire de la BDD
+  themes = [
+    {slug: 'country', name: 'Country'},
+    {slug: 'hip-hop', name: 'Hip Hop'},
+    {slug: 'Pop', name: 'Pop'}
+  ];
+  
+  res.render('index', {themes: themes});
 });
 
 module.exports = router;
