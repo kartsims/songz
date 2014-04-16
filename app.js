@@ -7,6 +7,7 @@ var path = require('path');
 
 var routes = require('./routes/index');
 var games = require('./routes/games');
+var play = require('./routes/play');
 
 var app = express();
 
@@ -18,6 +19,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
 app.use('/games', games);
+app.use('/play', play);
 
 /// catch 404 and forwarding to error handler
 app.use(function(req, res, next) {
@@ -57,6 +59,23 @@ app.use(function(err, req, res, next) {
   res.render('error', {
     message: err.message,
     error: {}
+  });
+});
+
+// socket connections
+var io = require('socket.io').listen(3030);
+io.sockets.on('connection', function (socket) {
+  
+  // notify everyone that a new player has entered the game
+  io.sockets.emit('newPlayer', { name: socket.id });
+  
+  // socket.on('my other event', function (data) {
+  //   console.log(data);
+  // });
+  
+  // if socket is closed: this player leaves the game
+  socket.on('disconnect', function () {
+    io.sockets.emit('exitPlayer', { name: socket.id });
   });
 });
 
