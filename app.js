@@ -4,6 +4,7 @@ var path = require('path');
 
 // my additions
 // var sass = require('node-sass');
+var db = require('monk')('localhost:27017/songz');
 
 var routes = require('./routes/index');
 var games = require('./routes/games');
@@ -16,6 +17,12 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Make our db accessible to our router
+app.use(function(req,res,next){
+    req.db = db;
+    next();
+});
 
 app.use('/', routes);
 app.use('/games', games);

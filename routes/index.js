@@ -1,17 +1,16 @@
 var express = require('express');
 var router = express.Router();
 
-/* GET home page. */
+/* Themes listing */
 router.get('/', function(req, res) {
   
-  // thèmes en dur, à extraire de la BDD
-  themes = [
-    {slug: 'country', name: 'Country'},
-    {slug: 'hip-hop', name: 'Hip Hop'},
-    {slug: 'Pop', name: 'Pop'}
-  ];
+  var themesDB = req.db.get('themes');
   
-  res.render('index', {themes: themes});
+  themesDB.find({}, function (err, docs){
+    // res.send(docs);
+    res.render('index', {themes: docs});
+  });
+  
 });
 
 module.exports = router;
