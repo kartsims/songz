@@ -2,5 +2,12 @@ extends layout
 
 block content
   h1 Let's play !
-  #console
+  #chatroom
   a(href='/') < Back to homepage
+
+  form#chat
+    input
+    button(type='submit') Send message
+
+block js
+  script(src='/javascripts/play.js')

@@ -2,8 +2,9 @@ var express = require('express');
 var router = express.Router();
 
 /* GET games listing. */
-router.get('/:slug?', function(req, res) {
-  res.render('games', {themeSlug: req.params.slug});
+router.get('/:id_package?', function(req, res) {
+
+  res.render('games', {theme: req.params.id_package});
 });
 
 module.exports = router;

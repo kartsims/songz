@@ -3,8 +3,8 @@ var express = require('express');
 var path = require('path');
 
 // my additions
-// var sass = require('node-sass');
-var db = require('monk')('localhost:27017/songz');
+var config = require('./inc/config');
+var db = require('monk')(config.db.host+':'+config.db.port+'/'+config.db.database);
 
 var routes = require('./routes/index');
 var games = require('./routes/games');
@@ -35,16 +35,6 @@ app.use(function(req, res, next) {
   next(err);
 });
 
-// sass middleware
-/*
-app.use(sass.middleware({
-  src: __dirname + '/public/stylesheets/sass',
-  dest: __dirname + '/public/stylesheets',
-  debug: true,
-  outputStyle: 'compressed'
-}));
-*/
-
 /// error handlers
 
 // development error handler
@@ -69,21 +59,8 @@ app.use(function(err, req, res, next) {
   });
 });
 
-// socket connections
-var io = require('socket.io').listen(3030);
-io.sockets.on('connection', function (socket) {
-  
-  // notify everyone that a new player has entered the game
-  io.sockets.emit('newPlayer', { name: socket.id });
-  
-  // socket.on('my other event', function (data) {
-  //   console.log(data);
-  // });
-  
-  // if socket is closed: this player leaves the game
-  socket.on('disconnect', function () {
-    io.sockets.emit('exitPlayer', { name: socket.id });
-  });
-});
+// listen to socket connections
+require('./inc/listener');
+
 
 module.exports = app;

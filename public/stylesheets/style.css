@@ -7,10 +7,9 @@ a {
   color: #00B7FF;
 }
 
-#console {
+#chatroom {
 	font-family: 'Courier';
 	width: 100%;
-	height: 200px;
 	border: solid 1px #ddd;
 	padding: 10px;
 }
