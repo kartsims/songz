@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 
 // show game page
-router.get('/', function(req, res) {
+router.get('/:slug', function(req, res) {
   res.render('play');
 });
 
