@@ -2,9 +2,4 @@ extends layout
 
 block content
   h1 Welcome to Songz
-  p Pick a music theme
-  ul
-    each theme in themes
-      li
-        a(href='/games/'+theme.slug)= theme.name
-        button(onclick="location.href='/play/"+theme.slug+"'") Join a game
+  
