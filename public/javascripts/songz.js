@@ -1,15 +1,28 @@
 var songz = {
 
+  user_id: null,
   socket: null,
 
   // load homepage
   init: function(){
 
-    // show a list of themes
+
+    // load app
     $.ajax({
-      url: '/game/themes',
+      url: '/game',
+      type: 'GET',
       dataType: 'json',
-      success: songz.view
+      success: function(data){
+console.log('session initialized');
+console.log(data);
+        songz.user_id = data.user_id;
+        // view homepage
+        $.ajax({
+          url: '/game/home',
+          dataType: 'json',
+          success: songz.view
+        });
+      }
     });
 
     // open socket and listen to events

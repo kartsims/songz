@@ -1,15 +1,20 @@
 // express basics
 var express = require('express');
 var path = require('path');
+var cookieParser = require('cookie-parser');
+var bodyParser = require('body-parser');
 
 // my additions
 var config = require('./inc/config');
 
 var app = express();
+app.use(cookieParser());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded());
 
 // view engine setup
-// app.set('views', path.join(__dirname, 'views'));
-// app.set('view engine', 'jade');
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'jade');
 
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -29,13 +34,22 @@ app.use(function(req,res,next){
 
 // routes
 app.use('/game', require('./routes/game'));
+app.use('/api', require('./routes/api'));
 
-/// catch 404 and forwarding to error handler
+
+// Use res.sendfile, as it streams instead of reading the file into memory.
+app.use(function(req, res) {
+  res.sendfile(__dirname + '/public/index.html');
+});
+/*
+forget about 404
+// catch 404 and forwarding to error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
   err.status = 404;
   next(err);
 });
+*/
 
 /// error handlers
 
@@ -60,5 +74,6 @@ app.use(function(err, req, res, next) {
     error: {}
   });
 });
+
 
 module.exports = app;

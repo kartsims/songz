@@ -4,8 +4,12 @@ var db = require('monk')(config.db.host+':'+config.db.port+'/'+config.db.databas
 
 // this object will store information about current running games
 var songz = {
-  nb_online: 1,
-  games: {}
+  nb_online: 0,
+  games: {
+    "53342ca9f3d7741d4b4552d9": [
+      { id: 46758, nb_users: 6 }
+    ]
+  }
 };
 
 /**
