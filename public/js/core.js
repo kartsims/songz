@@ -1,6 +1,6 @@
 angular.module('songz', [
   'ngRoute', 
   'appRoutes', 
-  'appController', 
-  'themeService'
+  'appControllers', 
+  'appServices'
 ]);
