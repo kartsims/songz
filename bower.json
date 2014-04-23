@@ -1,0 +1,11 @@
+{
+  "name": "Songz Front-end",
+  "version": "0.0.1",
+  "description": "AngularJs front-end application for Songz",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "angular": "1.2.16",
+    "angular-route": "~1.2.16"
+  }
+}
