@@ -8,6 +8,11 @@ angular.module('appRoutes', []).
         templateUrl: 'views/home.html',
         controller: 'mainController'
       }).
+      // play the game
+      when('/play/:theme_id', {
+        templateUrl: 'views/play.html',
+        controller: 'playController'
+      }).
       // theme details
       when('/:theme_id', {
         templateUrl: 'views/theme.html',

@@ -1,14 +1,14 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" ng-app="songz">
 <head>
     <meta charset="utf-8">
     <title>Songz</title>
+    <base href="/"></base>
 </head>
-<body ng-app="songz" ng-controller="mainController">
+<body>
 
     <h1>Songz</h1>
     <div ng-view></div>
-
  
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular-route.js"></script>
@@ -16,5 +16,6 @@
     <script src="/js/controllers.js"></script>
     <script src="/js/routes.js"></script>
     <script src="/js/core.js"></script>
+
 </body>
 </html>

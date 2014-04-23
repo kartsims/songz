@@ -1,0 +1,9 @@
+<a href="/{{theme._id}}">< BACK</a>
+<a href="/">[GO HOME]</a>
+<h2>Quiz {{theme.name}}</h2>
+<ol>
+    <li ng-repeat="song in theme.theme_songs">
+        {{song.song_artist}} - {{song.song_name}}
+    </li>
+</ol>
+
