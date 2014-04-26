@@ -12,55 +12,43 @@ var songz = {
   }
 };
 
-/**
- * Events that happen on any socket
- */
-var global_actions = {
 
-  // user opens a socket
-  connection: function(socket){
+// user opens a socket
+io.sockets.on('connection', function(socket){
 
-    songz.nb_online++;
-
-    // notify everyone that a new player has entered the game
-    // io.sockets.emit('new_player', { name: socket.id });
-
-    // listen to disconnection
-    socket.on('disconnect', function(){
-      songz.nb_online--;
-      // io.sockets.emit('exit_player', { name: socket.id });
-    });
-
-    // listen to events on this specific socket
-    for(var evt in socket_actions){
-      socket.on(evt, function(data){
-        socket_actions[evt](socket, data);
-      });
-    }
-
+  // create new user
+  var user = {
+    name: "Zarzouz"
   }
+  socket.emit('join_game', user);
 
-};
-// listen to these events
-for(var evt in global_actions){
-  io.sockets.on(evt, global_actions[evt]);
-}
+  // listen to disconnection
+  // socket.on('disconnect', function(){
+    // songz.nb_online--;
+    // io.sockets.emit('exit_player', { name: socket.id });
+  // });
 
-/**
- * Events that happen on a specific socket
- */
-var socket_actions = {
+  // user joins a game
+  socket.on('join_game', function(data){
 
-  // player sends message
-  chat: function(socket, data){
-    io.sockets.emit('chat', { 
-      name: socket.id,
-      message: data.message
+    socket.join(data.theme_id);
+    socket.set('theme_id', data.theme_id);
+    
+    // notify everyone that a new player has entered the game
+    io.sockets.in(socket.get('theme_id')).emit('new_player', user);
+
+console.log('join_game');console.log(data);
+
+    io.sockets.emit('new_player', {
+      data: data
     });
-  },
+  });
 
   // change user's name
-  set_name: function(socket, data){
+  socket.on('change_name', function(data){
+
+console.log('change_name');console.log(data);
+
     db.get('users').update(
       { _id: data._id },
       { $set: { name: data.name } },
@@ -68,10 +56,12 @@ var socket_actions = {
         io.sockets.emit('change_name', data);
       }
     );
-  },
+  });
 
   // save profile data in database
-  user_data: function(socket, data){
+  socket.on('user_data', function(data){
+
+console.log('user_data');console.log(data);
 
     // autogenerate a new name for the user
     if( typeof(data.name)=='undefined' || !data.name ){
@@ -95,9 +85,9 @@ var socket_actions = {
       });
     }
 
-  }
+  });
 
-};
+});
 
 
-module.exports = songz
+module.exports = songz;

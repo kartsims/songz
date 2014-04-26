@@ -37,26 +37,5 @@ angular.module('appControllers', []).
         console.log('Error: ' + data);
       });
 
-  }).
-
-
-  /*
-    PLAY THE GAME
-   */
-  controller('playController', function($scope, $http, $routeParams, $location) {
-
-    // when landing on the page, get all themes and show them
-    $http.
-      get('/api/theme/'+$routeParams.theme_id).
-      success(function(data) {
-        if(data.theme==null){
-          $location.url('/');
-        }
-        $scope.theme = data.theme;
-      }).
-      error(function(data) {
-        console.log('Error: ' + data);
-      });
-
   });
 

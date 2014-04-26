@@ -11,7 +11,7 @@ angular.module('appRoutes', []).
       // play the game
       when('/play/:theme_id', {
         templateUrl: 'views/play.html',
-        controller: 'playController'
+        controller: 'gameController'
       }).
       // theme details
       when('/:theme_id', {
