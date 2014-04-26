@@ -5,6 +5,5 @@ angular.module('songz', [
   // app modules
   'appRoutes', 
   'appControllers', 
-  'playControllers', 
   'appServices'
 ]);

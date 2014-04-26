@@ -33,7 +33,6 @@ app.use(function(req,res,next){
 });
 
 // routes
-app.use('/game', require('./routes/game'));
 app.use('/api', require('./routes/api'));
 
 

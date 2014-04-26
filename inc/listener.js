@@ -1,88 +1,88 @@
-var config = require('./config');
-var io = require('socket.io').listen(config.socket.port);
-var db = require('monk')(config.db.host+':'+config.db.port+'/'+config.db.database);
+var config = require('./config'),
+  io = require('socket.io').listen(config.socket.port)
+  db = require('monk')(config.db.host+':'+config.db.port+'/'+config.db.database)
+  Games = require('./games');
 
-// this object will store information about current running games
+/*
+  DATA SHARED WITH OTHER SCRIPTS ON THE SERVER
+ */
 var songz = {
-  nb_online: 0,
-  games: {
-    "53342ca9f3d7741d4b4552d9": [
-      { id: 46758, nb_users: 6 }
-    ]
-  }
+  // all users with open socket
+  users: {},
+  // games currently running
+  games: {}
 };
 
-
-// user opens a socket
+/*
+  OPEN A NEW SOCKET
+ */
 io.sockets.on('connection', function(socket){
 
-  // create new user
-  var user = {
-    name: "Zarzouz"
-  }
-  socket.emit('join_game', user);
+  // store him in our application
+  songz.users[socket.id] = {
+    game_id: null,
+    name: "Anonymous"
+  };
+  console.log("[connect] socket # " + socket.id);
 
-  // listen to disconnection
-  // socket.on('disconnect', function(){
-    // songz.nb_online--;
-    // io.sockets.emit('exit_player', { name: socket.id });
-  // });
-
-  // user joins a game
-  socket.on('join_game', function(data){
-
-    socket.join(data.theme_id);
-    socket.set('theme_id', data.theme_id);
+  /*
+    SOCKET DISCONNECTED
+   */
+  socket.on('disconnect', function(){
+    console.log("[disconnect] socket # " + socket.id);
     
-    // notify everyone that a new player has entered the game
-    io.sockets.in(socket.get('theme_id')).emit('new_player', user);
-
-console.log('join_game');console.log(data);
-
-    io.sockets.emit('new_player', {
-      data: data
-    });
+    // user leave the current game
+    Games.user_leaves_game(songz, socket.id);
+    
+    // update server's user info
+    delete songz.users[socket.id];
   });
 
-  // change user's name
+  /*
+    JOIN A GAME
+   */
+  socket.on('join_game', function(data){
+    console.log('[on] join_game socket # ' + socket.id);
+
+    var game_id = data.game_id;
+
+    // update server's user info
+    songz.users[socket.id].game_id = game_id;
+
+    // let user join the game
+    songz.games[game_id].players.push(socket.id);
+
+    // console log
+    console.log(songz.users[socket.id].name + " has joined the game # "+game_id);
+
+    // notify other players
+    var data = Games.players_list(songz, game_id);
+    console.log("[emit] players_list", data);
+    io.sockets.emit('players_list', data);
+  });
+
+  /*
+    LEAVE A GAME
+   */
+  socket.on('leave_game', function(data){
+    console.log('[on] leave_game socket # ' + socket.id);
+
+    Games.user_leaves_game(songz, socket.id);
+  });
+
+  /*
+    CHANGE USER'S NAME
+   */
   socket.on('change_name', function(data){
 
-console.log('change_name');console.log(data);
+    // update server's user info
+    songz.users[socket.id].name = data.name;
 
-    db.get('users').update(
-      { _id: data._id },
-      { $set: { name: data.name } },
-      function(){
-        io.sockets.emit('change_name', data);
-      }
-    );
-  });
-
-  // save profile data in database
-  socket.on('user_data', function(data){
-
-console.log('user_data');console.log(data);
-
-    // autogenerate a new name for the user
-    if( typeof(data.name)=='undefined' || !data.name ){
-      data.name = 'User' + Math.floor((Math.random()*98)+1);
-    }
-
-    // known user
-    if( data._id ){
-      db.get('users').update(
-        { _id: data._id },
-        { $set: data },
-        function(){
-          socket.emit('get_data', data);
-        }
-      );
-    }
-    // new user
-    else{
-      db.get('users').insert(data, function(){
-        socket.emit('get_data', data);
-      });
+    // notify other players if this user is not playing currently
+    if( songz.users[socket.id].game_id!=null ){
+      console.log("[emit] players_list");
+      console.log( Games.players_list(songz, songz.users[socket.id].game_id) );
+      io.sockets.emit('players_list', Games.players_list(songz, songz.users[socket.id].game_id));
     }
 
   });

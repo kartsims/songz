@@ -1,23 +1,32 @@
-<a href="/{{theme._id}}">< BACK</a>
-<a href="/">[GO HOME]</a>
-<h2>Quiz {{theme.name}}</h2>
 
-<h4>Infos perso</h4>
-<p>{{me.username}}</p>
-<form ng-submit="changeName()">
-    <input type="text" ng-model="username">
-    <button type="submit">Modifier</button>
+<form ng-submit="changeMyName()" id="form-name">
+    <strong>User name :</strong>
+    <input type="text" ng-model="me.name" ng-blur="changeMyName()">
+    <button type="submit" ng-hide="true"></button>
 </form>
+<hr/>
 
-<h4>Players</h4>
-<ul>
-    <li ng-repeat="player in players">{{player.username}}</li>
-</ul>
+<a href="" ng-click="leaveGame()">< LEAVE THE GAME</a>
+<hr/>
 
-<h4>Tracklist</h4>
-<ol>
-    <li ng-repeat="song in theme.theme_songs">
-        {{song.song_artist}} - {{song.song_name}}
-    </li>
-</ol>
+<div ng-show="loading">
+    LOADING...
+</div>
+
+<div ng-hide="loading">
+
+    <h4>PLAYERS ({{nb_online}})</h4>
+    <ul>
+        <li ng-repeat="player in players">{{player.name}}</li>
+    </ul>
+
+    <h4>Tracklist</h4>
+    <ol>
+        <li ng-repeat="song in songs">
+            {{song.song_artist}} - {{song.song_name}}
+        </li>
+    </ol>
+    
+</div>
+
 

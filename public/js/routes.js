@@ -9,14 +9,9 @@ angular.module('appRoutes', []).
         controller: 'mainController'
       }).
       // play the game
-      when('/play/:theme_id', {
+      when('/play/:game_id', {
         templateUrl: 'views/play.html',
         controller: 'gameController'
-      }).
-      // theme details
-      when('/:theme_id', {
-        templateUrl: 'views/theme.html',
-        controller: 'themeDetailController'
       }).
       otherwise({
         redirectTo: '/'
