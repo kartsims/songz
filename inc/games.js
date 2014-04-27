@@ -39,6 +39,11 @@ module.exports = {
     // update server's user info
     songz.users[socket_id].game_id = null;
 
+    // game doesn't exist ?
+    if( typeof(songz.games[game_id])=='undefined' ){
+      return;
+    }
+
     // remove user from the game
     for(var key in songz.games[game_id].players){
       if( songz.games[game_id].players[key]==socket_id ){
@@ -56,7 +61,7 @@ module.exports = {
 
     // notify other players
     var data = this.players_list(songz, game_id);
-    console.log("[emit] players_list", data);
+    console.log("[emit]".magenta + " players_list", data);
     io.sockets.emit('players_list', data);
   }
 

@@ -6,6 +6,7 @@ var bodyParser = require('body-parser');
 
 // my additions
 var config = require('./inc/config');
+var colors = require('colors');
 
 var app = express();
 app.use(cookieParser());
