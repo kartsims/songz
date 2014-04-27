@@ -61,7 +61,7 @@ module.exports = {
 
     // notify other players
     var data = this.players_list(songz, game_id);
-    console.log("[emit]".magenta + " players_list", data);
+    console.log("→ [players_list]".magenta, data);
     io.sockets.emit('players_list', data);
   }
 
