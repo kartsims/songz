@@ -32,7 +32,7 @@ io.sockets.on('connection', function(socket){
     console.log("[disconnect]".magenta +" "+ socket.id.cyan);
     
     // user leave the current game
-    Games.user_leaves_game(songz, socket.id);
+    Games.user_leaves_game(songz, io, socket.id);
     
     // update server's user info
     delete songz.users[socket.id];
@@ -42,7 +42,7 @@ io.sockets.on('connection', function(socket){
     JOIN A GAME
    */
   socket.on('join_game', function(data){
-    console.log("← [join_game]".magenta +" "+ socket.id.cyan);
+    console.log("← join_game".magenta +" "+ socket.id.cyan);
 
     var game_id = data.game_id;
 
@@ -62,7 +62,7 @@ io.sockets.on('connection', function(socket){
 
     // notify other players
     var data = Games.players_list(songz, game_id);
-    console.log("→ [players_list]".magenta, data);
+    console.log("→ players_list*".magenta, data);
     io.sockets.emit('players_list', data);
   });
 
@@ -70,15 +70,15 @@ io.sockets.on('connection', function(socket){
     LEAVE A GAME
    */
   socket.on('leave_game', function(data){
-    console.log("← [leave_game]".magenta +" "+ socket.id.cyan);
-
-    Games.user_leaves_game(songz, socket.id);
+    console.log("← leave_game".magenta +" "+ socket.id.cyan);
+    Games.user_leaves_game(songz, io, socket.id);
   });
 
   /*
     CHANGE USER'S NAME
    */
   socket.on('change_name', function(data){
+    console.log("← change_name".magenta +" "+ socket.id.cyan);
 
     // update server's user info
     songz.users[socket.id].name = data.name;
@@ -86,7 +86,7 @@ io.sockets.on('connection', function(socket){
     // notify other players if this user is not playing currently
     if( songz.users[socket.id].game_id!=null ){
       var data = Games.players_list(songz, songz.users[socket.id].game_id);
-      console.log("→ [players_list]".magenta, data);
+      console.log("→ players_list*".magenta, data);
       io.sockets.emit('players_list', data);
     }
 

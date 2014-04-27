@@ -50,7 +50,7 @@ angular.module('appControllers', []).
 
     // callback to change user'sname
     $scope.changeMyName = function(){
-      console.log("[emit] change_name", $scope.me.name);
+      console.log("→ change_name", $scope.me.name);
       mySocket.emit('change_name', {
         id: $scope.me.id,
         name: $scope.me.name
@@ -60,7 +60,7 @@ angular.module('appControllers', []).
 
     // leave the game
     $scope.leaveGame = function(){
-      console.log("[emit] leave_game");
+      console.log("→ leave_game");
       mySocket.emit('leave_game', {
         id: $scope.me.id
       });
@@ -81,7 +81,7 @@ angular.module('appControllers', []).
     // update users list
     $scope.players = [];
     mySocket.on('players_list', function(data){
-      console.log('[on] players_list', data);
+      console.log('← players_list', data);
       $scope.players = data;
       $scope.nb_online = data.length;
     });
@@ -98,7 +98,7 @@ angular.module('appControllers', []).
         else{
           $scope.loading = false;
           
-          console.log('[emit] join_game', $routeParams.game_id);
+          console.log('→ join_game', $routeParams.game_id);
           mySocket.emit('join_game', {game_id:$routeParams.game_id});
         }
       }).

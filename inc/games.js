@@ -1,5 +1,4 @@
-var config = require('./config'),
-  io = require('socket.io').listen(config.socket.port);
+var config = require('./config');
 
 module.exports = {
 
@@ -69,7 +68,7 @@ module.exports = {
   /*
     A USER LEAVES THE GAME
    */
-  user_leaves_game: function(songz, socket_id){
+  user_leaves_game: function(songz, io, socket_id){
 
     var game_id = songz.users[socket_id].game_id;
 
@@ -98,7 +97,7 @@ module.exports = {
 
     // notify other players
     var data = this.players_list(songz, game_id);
-    console.log("→ [players_list]".magenta, data);
+    console.log("→ players_list*".magenta, data);
     io.sockets.emit('players_list', data);
   }
 
