@@ -30,6 +30,43 @@ module.exports = {
   },
 
   /*
+    FIND A GAME FROM A THEME
+   */
+  find_by_theme: function(songz, theme_id){
+
+    var game_id = null;
+
+    // is there a game currently running on this theme ?
+    for(var id in songz.games){
+
+      if(
+        songz.games[id].theme_id == theme_id &&
+        songz.games[id].players.length < config.game.max_players
+      ){
+        game_id = id;
+        console.log("New player can join game # "+game_id);
+        break;
+      }
+
+    }
+    // create a new game on this theme
+    if( game_id === null ){
+
+      var game_id = theme_id + '-' + Date.now();
+      songz.games[game_id] = {
+          theme_id: theme_id,
+          players: [],
+          songs: []
+      };
+      console.log("New player created game # "+game_id);
+
+    }
+
+    return game_id;
+
+  },
+
+  /*
     A USER LEAVES THE GAME
    */
   user_leaves_game: function(songz, socket_id){

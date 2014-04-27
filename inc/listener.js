@@ -49,6 +49,11 @@ io.sockets.on('connection', function(socket){
     // update server's user info
     songz.users[socket.id].game_id = game_id;
 
+    // check that the user isn't already in this game
+    // TODO
+    // check that user isn't already in another game
+    // TODO
+
     // let user join the game
     songz.games[game_id].players.push(socket.id);
 
@@ -80,7 +85,7 @@ io.sockets.on('connection', function(socket){
 
     // notify other players if this user is not playing currently
     if( songz.users[socket.id].game_id!=null ){
-      var data = Games.players_list(songz, game_id);
+      var data = Games.players_list(songz, songz.users[socket.id].game_id);
       console.log("→ [players_list]".magenta, data);
       io.sockets.emit('players_list', data);
     }

@@ -55,6 +55,7 @@ angular.module('appControllers', []).
         id: $scope.me.id,
         name: $scope.me.name
       });
+      $.cookie("username", $scope.me.name);
     };
 
     // leave the game
@@ -66,12 +67,15 @@ angular.module('appControllers', []).
       $location.url('/');
     };
 
-    // pick a random user name
+    // look for saves username or pick a random one
+    var username = typeof($.cookie('username'))=="undefined" ?
+      "Anonymous" + Math.floor((Math.random()*100)+1) :
+      $.cookie('username');
+
+    // save username
     $scope.me = {
-      socket_id: mySocket.id,
-      name: "Zarzouz"
+      name: username
     };
-    console.log(mySocket);
     $scope.changeMyName();
 
     // update users list
@@ -86,10 +90,17 @@ angular.module('appControllers', []).
     $http.
       get('/api/game/'+$routeParams.game_id).
       success(function(data) {
-        $scope.loading = false;
-        
-        console.log('[emit] join_game', $routeParams.game_id);
-        mySocket.emit('join_game', {game_id:$routeParams.game_id});
+        // game has not been found, might be finished
+        if( typeof(data.game_id)=='string' ){
+          $location.url('/play/'+data.game_id);
+        }
+        // if the game is up and running
+        else{
+          $scope.loading = false;
+          
+          console.log('[emit] join_game', $routeParams.game_id);
+          mySocket.emit('join_game', {game_id:$routeParams.game_id});
+        }
       }).
       error(function(data) {
         console.log('Error: ' + data);
