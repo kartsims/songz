@@ -14,7 +14,7 @@ module.exports = {
       var socket_id = game_data.players[key];
       // if player doesn't exist anymore, remove it
       if( typeof(songz.users[socket_id])=='undefined' ){
-        delete songz.games[game_id].players[key];
+        songz.games[game_id].players.splice(key);
       }
       // add to players list
       else {
@@ -66,14 +66,25 @@ module.exports = {
   },
 
   /*
+    GAME IS FINISHED
+   */
+  finish: function(songz, io, game_id){
+    // notify every player of the result
+    // TODO
+    
+    // remove from global object
+    delete songz.games[game_id];
+  },
+
+  /*
     A USER LEAVES THE GAME
    */
-  user_leaves_game: function(songz, io, socket_id){
+  user_leaves_game: function(songz, io, socket){
 
-    var game_id = songz.users[socket_id].game_id;
+    var game_id = songz.users[socket.id].game_id;
 
     // update server's user info
-    songz.users[socket_id].game_id = null;
+    songz.users[socket.id].game_id = null;
 
     // game doesn't exist ?
     if( typeof(songz.games[game_id])=='undefined' ){
@@ -82,23 +93,31 @@ module.exports = {
 
     // remove user from the game
     for(var key in songz.games[game_id].players){
-      if( songz.games[game_id].players[key]==socket_id ){
-        delete songz.games[game_id].players[key];
+      if( songz.games[game_id].players[key]==socket.id ){
+        songz.games[game_id].players.splice(key);
       }
     }
-
-    // remove game if everyone is gone !
-    // 
-    // TODO
-    // 
     
     // console log
-    console.log(songz.users[socket_id].name + " has left the game # "+game_id);
+    console.log(songz.users[socket.id].name + " has left the game # "+game_id);
 
     // notify other players
+    socket.broadcast.to(game_id).emit('left_game', {
+      name: songz.users[socket.id].name
+    });
+
+    // update other players' list
     var data = this.players_list(songz, game_id);
-    console.log("→ players_list*".magenta, data);
-    io.sockets.emit('players_list', data);
+    console.log("→ players_list".magenta, data, game_id.yellow);
+    socket.broadcast.to(game_id).emit('players_list', data);
+
+    // leave socket.io's room
+    socket.leave(game_id);
+
+    // remove game if everyone is gone !
+    if( songz.games[game_id].players.length==0 ){
+      this.finish(songz, io, game_id);
+    }
   }
 
 }

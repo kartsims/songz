@@ -12,6 +12,7 @@ router.get('/home', function(req, res) {
   req.db.get('themes').find({}, function (err, docs){
     res.send({
       nb_online: Object.keys(songz.users).length,
+      games: songz.games,
       themes: docs
     });
   });

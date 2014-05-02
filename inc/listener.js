@@ -32,7 +32,7 @@ io.sockets.on('connection', function(socket){
     console.log("[disconnect]".magenta +" "+ socket.id.cyan);
     
     // user leave the current game
-    Games.user_leaves_game(songz, io, socket.id);
+    Games.user_leaves_game(songz, io, socket);
     
     // update server's user info
     delete songz.users[socket.id];
@@ -43,6 +43,7 @@ io.sockets.on('connection', function(socket){
    */
   socket.on('join_game', function(data){
     console.log("← join_game".magenta +" "+ socket.id.cyan);
+
 
     var game_id = data.game_id;
 
@@ -60,10 +61,18 @@ io.sockets.on('connection', function(socket){
     // console log
     console.log(songz.users[socket.id].name + " has joined the game # "+game_id);
 
-    // notify other players
+    // join socket.io's room
+    socket.join(game_id);
+
+    // notify others of the new player
+    socket.broadcast.to(game_id).emit('joined_game', {
+      name: songz.users[socket.id].name
+    });
+    
+    // update players list
     var data = Games.players_list(songz, game_id);
-    console.log("→ players_list*".magenta, data);
-    io.sockets.emit('players_list', data);
+    console.log("→ players_list".magenta, data, game_id);
+    io.sockets.in(game_id).emit('players_list', data);
   });
 
   /*
@@ -71,7 +80,7 @@ io.sockets.on('connection', function(socket){
    */
   socket.on('leave_game', function(data){
     console.log("← leave_game".magenta +" "+ socket.id.cyan);
-    Games.user_leaves_game(songz, io, socket.id);
+    Games.user_leaves_game(songz, io, socket);
   });
 
   /*
@@ -81,13 +90,25 @@ io.sockets.on('connection', function(socket){
     console.log("← change_name".magenta +" "+ socket.id.cyan);
 
     // update server's user info
+    var old_name = songz.users[socket.id].name;
     songz.users[socket.id].name = data.name;
+    socket.set('name', data.name, function () {
+      socket.emit('ready');
+    });
 
-    // notify other players if this user is not playing currently
+    // if user has a game running
     if( songz.users[socket.id].game_id!=null ){
+
+      // notify others of the changed name
+      socket.broadcast.to(songz.users[socket.id].game_id).emit('changed_name', {
+        old_name: old_name,
+        new_name: data.name
+      });
+      
+      // update players list
       var data = Games.players_list(songz, songz.users[socket.id].game_id);
-      console.log("→ players_list*".magenta, data);
-      io.sockets.emit('players_list', data);
+      console.log("→ players_list".magenta, data, songz.users[socket.id].game_id);
+      io.sockets.in(songz.users[socket.id].game_id).emit('players_list', data);
     }
 
   });

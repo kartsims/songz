@@ -1,5 +1,5 @@
 
-<form ng-submit="changeMyName()" id="form-name">
+<form id="form-name">
     <strong>User name :</strong>
     <input type="text" ng-model="me.name" ng-blur="changeMyName()">
     <button type="submit" ng-hide="true"></button>
@@ -19,6 +19,9 @@
     <ul>
         <li ng-repeat="player in players">{{player.name}}</li>
     </ul>
+
+    <h4>Notifications</h4>
+    <ul id="notifications"></ul>
 
     <h4>Tracklist</h4>
     <ol>

@@ -4,4 +4,11 @@
     </li>
 </ul>
 
+<ul>
+    <li ng-repeat="game in games">
+        <strong>{{game.theme_id}}</strong>
+        ({{game.players.length}})
+    </li>
+</ul>
+
 <p>{{nb_online}} players online</p>

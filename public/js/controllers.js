@@ -21,6 +21,7 @@ angular.module('appControllers', []).
       get('/api/home').
       success(function(data) {
         $scope.themes = data.themes;
+        $scope.games = data.games;
         $scope.nb_online = data.nb_online;
       }).
       error(function(data) {
@@ -48,7 +49,7 @@ angular.module('appControllers', []).
 
     $scope.loading = true;
 
-    // callback to change user'sname
+    // change my username
     $scope.changeMyName = function(){
       console.log("→ change_name", $scope.me.name);
       mySocket.emit('change_name', {
@@ -67,7 +68,7 @@ angular.module('appControllers', []).
       $location.url('/');
     };
 
-    // look for saves username or pick a random one
+    // look for saved username or pick a random one
     var username = typeof($.cookie('username'))=="undefined" ?
       "Anonymous" + Math.floor((Math.random()*100)+1) :
       $.cookie('username');
@@ -78,13 +79,11 @@ angular.module('appControllers', []).
     };
     $scope.changeMyName();
 
-    // update users list
-    $scope.players = [];
-    mySocket.on('players_list', function(data){
-      console.log('← players_list', data);
-      $scope.players = data;
-      $scope.nb_online = data.length;
-    });
+    // display a notification
+    $scope.notify = function(html){
+      console.log("notify", html);
+      $('<li>').html(html).appendTo($('#notifications'));
+    }
 
     // set up the game
     $http.
@@ -105,6 +104,40 @@ angular.module('appControllers', []).
       error(function(data) {
         console.log('Error: ' + data);
       });
+
+    /*
+      SOCKET CUSTOM EVENTS
+     */
+
+    // update users list
+    $scope.players = [];
+    mySocket.forward('players_list', $scope);
+    $scope.$on('socket:players_list', function (ev, data) {
+      console.log('← players_list', data);
+      $scope.players = data;
+      $scope.nb_online = data.length;
+    });
+
+    // notify one's name has changed
+    mySocket.forward('changed_name', $scope);
+    $scope.$on('socket:changed_name', function (ev, data) {
+      console.log('← changed_name', data);
+      $scope.notify(data.old_name + " has changed his name for " + data.new_name);
+    });
+
+    // notify one has joined the game
+    mySocket.forward('joined_game', $scope);
+    $scope.$on('socket:joined_game', function (ev, data) {
+      console.log('← joined_game', data);
+      $scope.notify(data.name + " has joined the game");
+    });
+
+    // notify one has left the game
+    mySocket.forward('left_game', $scope);
+    $scope.$on('socket:left_game', function (ev, data) {
+      console.log('← left_game', data);
+      $scope.notify(data.name + " has left the game");
+    });
 
   });
 
