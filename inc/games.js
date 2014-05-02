@@ -1,4 +1,5 @@
-var config = require('./config');
+var config = require('./config'),
+  db = require('monk')(config.db.host+':'+config.db.port+'/'+config.db.database);;
 
 module.exports = {
 
@@ -14,7 +15,7 @@ module.exports = {
       var socket_id = game_data.players[key];
       // if player doesn't exist anymore, remove it
       if( typeof(songz.users[socket_id])=='undefined' ){
-        songz.games[game_id].players.splice(key);
+        songz.games[game_id].players.splice(key, 1);
       }
       // add to players list
       else {
@@ -50,14 +51,9 @@ module.exports = {
     }
     // create a new game on this theme
     if( game_id === null ){
-
-      var game_id = theme_id + '-' + Date.now();
-      songz.games[game_id] = {
-          theme_id: theme_id,
-          players: [],
-          songs: []
-      };
+      var game_id = this.create_game(songz, theme_id);
       console.log("New player created game # "+game_id);
+      this.start_game(songz, game_id);
 
     }
 
@@ -66,9 +62,73 @@ module.exports = {
   },
 
   /*
+    CREATE A NEW GAME
+   */
+  create_game: function(songz, theme_id){
+      var game_id = theme_id + '-' + Date.now();
+      songz.games[game_id] = {
+          theme_id: theme_id,
+          players: [],
+          songs: []
+      };
+
+      // pick X songs
+      db.get('themes').findById(theme_id, function (err, docs){
+        while( songz.games[game_id].songs.length < config.game.nb_songs ){
+          var i = Math.floor( docs.theme_songs.length * Math.random() );
+          songz.games[game_id].songs.push( docs.theme_songs.splice(i, 1) );
+        }
+      });
+
+      return game_id;
+  },
+
+  /*
+    START A GAME
+   */
+  start_game: function(songz, game_id){
+    var Games = this;
+
+    // start playing in X seconds
+    setTimeout(function(){
+      songz.games[game_id].interval = setInterval(function(){
+
+        this.play_next_song(songz, game_id);
+        
+      }, config.game.interval_timer*1000);
+    }, config.game.start_timer*1000);
+
+  },
+
+  /*
+    PLAY NEXT SONG
+   */
+  play_next_song: function(songz, game_id){
+
+    // if no more song, end the game
+    if( songz.games[game_id].songs.length==0 ){
+      Games.finish(game_id);
+      return;
+    }
+
+    // start playing next song
+    var data = {
+      song: songz.games[game_id].songs.shift()[0],
+      preload: songz.games[game_id].songs.length>0 ?
+        songz.games[game_id].songs[0][0].song_stream_url : null
+    }
+    console.log("→ play_song".magenta, data.song.song_artist+" - "+data.song.song_name, game_id.yellow);
+    songz.io.sockets.in(game_id).emit("play_song", data);
+
+  },
+
+  /*
     GAME IS FINISHED
    */
-  finish: function(songz, io, game_id){
+  finish: function(songz, game_id){
+    // clear interval for playing songs
+    clearInterval(songz.games[game_id].interval);
+
     // notify every player of the result
     // TODO
     
@@ -79,8 +139,9 @@ module.exports = {
   /*
     A USER LEAVES THE GAME
    */
-  user_leaves_game: function(songz, io, socket){
+  user_leaves_game: function(songz, socket){
 
+    var io = songz.io;
     var game_id = songz.users[socket.id].game_id;
 
     // update server's user info
@@ -94,7 +155,7 @@ module.exports = {
     // remove user from the game
     for(var key in songz.games[game_id].players){
       if( songz.games[game_id].players[key]==socket.id ){
-        songz.games[game_id].players.splice(key);
+        songz.games[game_id].players.splice(key, 1);
       }
     }
     
@@ -102,6 +163,7 @@ module.exports = {
     console.log(songz.users[socket.id].name + " has left the game # "+game_id);
 
     // notify other players
+    console.log("→ left_game".magenta, songz.users[socket.id].name, game_id.yellow);
     socket.broadcast.to(game_id).emit('left_game', {
       name: songz.users[socket.id].name
     });
@@ -116,7 +178,7 @@ module.exports = {
 
     // remove game if everyone is gone !
     if( songz.games[game_id].players.length==0 ){
-      this.finish(songz, io, game_id);
+      this.finish(songz, game_id);
     }
   }
 

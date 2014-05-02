@@ -85,6 +85,12 @@ angular.module('appControllers', []).
       $('<li>').html(html).appendTo($('#notifications'));
     }
 
+    // preload a song's URL
+    $scope.preload_song = function(url){
+      $scope.preload = url;
+      // TODO: real preloading
+    }
+
     // set up the game
     $http.
       get('/api/game/'+$routeParams.game_id).
@@ -137,6 +143,29 @@ angular.module('appControllers', []).
     $scope.$on('socket:left_game', function (ev, data) {
       console.log('← left_game', data);
       $scope.notify(data.name + " has left the game");
+    });
+
+    // notify one has left the game
+    mySocket.forward('play_song', $scope);
+    $scope.$on('socket:play_song', function (ev, data) {
+      console.log('← play_song', data);
+      $scope.playing = data.song.song_stream_url;
+      $scope.preload_song(data.preload);
+      $('#track-progress').
+        stop().
+        css({
+          width: '0%'
+        }).
+        animate({
+          width: '100%'
+        }, 30000, 'linear');
+    });
+
+    // preload a song
+    mySocket.forward('preload_song', $scope);
+    $scope.$on('socket:preload_song', function (ev, data) {
+      console.log('← preload_song', data);
+      $scope.preload_song(data.preload);
     });
 
   });

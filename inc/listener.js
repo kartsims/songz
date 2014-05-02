@@ -7,6 +7,7 @@ var config = require('./config'),
   DATA SHARED WITH OTHER SCRIPTS ON THE SERVER
  */
 var songz = {
+  io: io,
   // all users with open socket
   users: {},
   // games currently running
@@ -32,7 +33,7 @@ io.sockets.on('connection', function(socket){
     console.log("[disconnect]".magenta +" "+ socket.id.cyan);
     
     // user leave the current game
-    Games.user_leaves_game(songz, io, socket);
+    Games.user_leaves_game(songz, socket);
     
     // update server's user info
     delete songz.users[socket.id];
@@ -49,7 +50,7 @@ io.sockets.on('connection', function(socket){
     // check that user isn't already in another game
     if( songz.users[socket.id].game_id!=null ){
       console.log("User already playing".red);
-      Games.user_leaves_game(songz, io, socket);
+      Games.user_leaves_game(songz, socket);
     }
 
     // update server's user info
@@ -68,6 +69,12 @@ io.sockets.on('connection', function(socket){
 
     // console log
     console.log(songz.users[socket.id].name + " has joined the game # "+game_id);
+
+    // preload first song
+    console.log("→ preload_song".magenta, songz.games[game_id].songs[0][0].song_stream_url, game_id.yellow);
+    socket.emit("preload_song", {
+      preload: songz.games[game_id].songs[0][0].song_stream_url
+    });
 
     // join socket.io's room
     socket.join(game_id);
@@ -88,7 +95,7 @@ io.sockets.on('connection', function(socket){
    */
   socket.on('leave_game', function(data){
     console.log("← leave_game".magenta +" "+ socket.id.cyan);
-    Games.user_leaves_game(songz, io, socket);
+    Games.user_leaves_game(songz, socket);
   });
 
   /*
