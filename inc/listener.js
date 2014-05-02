@@ -44,16 +44,24 @@ io.sockets.on('connection', function(socket){
   socket.on('join_game', function(data){
     console.log("← join_game".magenta +" "+ socket.id.cyan);
 
-
     var game_id = data.game_id;
+    
+    // check that user isn't already in another game
+    if( songz.users[socket.id].game_id!=null ){
+      console.log("User already playing".red);
+      Games.user_leaves_game(songz, io, socket);
+    }
 
     // update server's user info
     songz.users[socket.id].game_id = game_id;
 
     // check that the user isn't already in this game
-    // TODO
-    // check that user isn't already in another game
-    // TODO
+    for(var i in songz.games[game_id].players){
+      if( songz.games[game_id].players[i]==socket.id ){
+        console.log("User already in game !".red);
+        return;
+      }
+    }
 
     // let user join the game
     songz.games[game_id].players.push(socket.id);
