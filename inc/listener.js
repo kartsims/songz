@@ -71,9 +71,9 @@ io.sockets.on('connection', function(socket){
     console.log(songz.users[socket.id].name + " has joined the game # "+game_id);
 
     // preload first song
-    console.log("→ preload_song".magenta, songz.games[game_id].songs[0][0].song_stream_url, game_id.yellow);
+    console.log("→ preload_song".magenta, songz.games[game_id].songs[0].song_stream_url, game_id.yellow);
     socket.emit("preload_song", {
-      preload: songz.games[game_id].songs[0][0].song_stream_url
+      preload: songz.games[game_id].songs[0].song_stream_url
     });
 
     // join socket.io's room
@@ -126,6 +126,14 @@ io.sockets.on('connection', function(socket){
       io.sockets.in(songz.users[socket.id].game_id).emit('players_list', data);
     }
 
+  });
+
+  /*
+    GUESSED THE ARTIST OR NAME OF THE SONG
+   */
+  socket.on('guessed', function(field){
+    console.log("← guessed".magenta +" "+ field +" "+ socket.id.cyan);
+    Games.user_guessed(songz, socket, field);
   });
 
 });

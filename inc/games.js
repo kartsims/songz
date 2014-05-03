@@ -68,14 +68,20 @@ module.exports = {
       songz.games[game_id] = {
           theme_id: theme_id,
           players: [],
-          songs: []
+          songs: [],
+          results: []
       };
 
       // pick X songs
       db.get('themes').findById(theme_id, function (err, docs){
         while( songz.games[game_id].songs.length < config.game.nb_songs ){
           var i = Math.floor( docs.theme_songs.length * Math.random() );
-          songz.games[game_id].songs.push( docs.theme_songs.splice(i, 1) );
+          var song = docs.theme_songs.splice(i, 1)[0];
+          song.results = {
+            name: [],
+            artist: []
+          }
+          songz.games[game_id].songs.push( song );
         }
       });
 
@@ -103,25 +109,29 @@ module.exports = {
 
     // if no more song, end the game
     if( songz.games[game_id].songs.length==0 ){
-      Games.finish(game_id);
+      Games.finish(songz, game_id);
       return;
     }
 
     // start playing next song
-    var song = songz.games[game_id].songs.shift()[0];
+    var song = songz.games[game_id].songs[0];
     var data = {
+      // TODO: encode song's artist and name
+      artist: song.song_artist_encode,
+      name: song.song_name_encode,
+      // 
       play: song.song_stream_url,
-      duration: config.game.song_duration,
-      preload: songz.games[game_id].songs.length>0 ?
-        songz.games[game_id].songs[0][0].song_stream_url : null
+      duration: config.game.song_duration
     }
     console.log("→ play_song".magenta, song.song_artist+" - "+song.song_name, game_id.yellow);
     songz.io.sockets.in(game_id).emit("play_song", data);
 
     // send results at the end of the song
     setTimeout(function(){
+      var result = songz.games[game_id].songs.shift();
+      songz.games[game_id].results.push(result);
       console.log("→ answer_song".magenta, song.song_artist+" - "+song.song_name, game_id.yellow);
-      songz.io.sockets.in(game_id).emit("answer_song", song);
+      songz.io.sockets.in(game_id).emit("answer_song", result);
       
       // then play next song in X seconds
       setTimeout(function(){
@@ -137,11 +147,10 @@ module.exports = {
     GAME IS FINISHED
    */
   finish: function(songz, game_id){
-    // clear interval for playing songs
-    clearInterval(songz.games[game_id].interval);
 
     // notify every player of the result
-    // TODO
+    console.log("→ game_results".magenta, new String("game_id").yellow);
+    songz.io.sockets.in(game_id).emit("game_results", songz.games[game_id].results);
     
     // remove from global object
     delete songz.games[game_id];
@@ -191,6 +200,17 @@ module.exports = {
     if( songz.games[game_id].players.length==0 ){
       this.finish(songz, game_id);
     }
+  },
+
+  /*
+    USER HAS GUESSED THE NAME OR ARTIST
+   */
+  user_guessed: function(songz, socket, field){
+
+    var game_id = songz.users[socket.id].game_id;
+
+    // add this user to the results
+    songz.games[game_id].songs[0].results[field].push(socket.id);
   }
 
 }

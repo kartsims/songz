@@ -96,16 +96,63 @@ angular.module('appControllers', []).
       swfPath: "/bower_components/jplayer/jquery.jplayer"
     });
     $scope.play_song = function(url, duration){
-      $scope.playing = url;
 
       // play the song for X seconds
       $scope.jplayer.
         jPlayer("setMedia", {mp3: url}).
         jPlayer("play");
+      
+      $('#my-guess').val('');
 
       setTimeout(function(){
         $scope.jplayer.jPlayer("stop");
       }, duration);
+    }
+
+    // try a guess
+    $scope.song = {
+      artist: null,
+      name: null
+    }
+    $scope.guess_song = function(){
+      var a = FuzzySet();
+      a.add($scope.song.artist);
+      a.add($scope.song.name);
+      var x = a.get($('#my-guess').val());
+      for(var i in x){
+        var score = x[i][0].toFixed(2);
+        if( score<.4 ){
+          $('#guess-results').html("Try again...");
+        }
+        else if( score<.75 ){
+          $('#guess-results').html("Getting close...");
+        }
+        // artist found
+        else if( x[i][1]==$scope.song.artist ){
+          $('#my-guess').val('');
+          $scope.guessed('artist');
+        }
+        // name found
+        else if( x[i][1]==$scope.song.name ){
+          $('#my-guess').val('');
+          $scope.guessed('name');
+        }
+      }
+    }
+
+    // player guessed right
+    $scope.guessed = function(field){
+      if(field=='artist'){
+        $('#guess-results').html("You found the artist !");
+      }
+      else if(field=='name'){
+        $('#guess-results').html("You found the name of this song !");
+      }
+      else{
+        return;
+      }
+      console.log("→ guessed ("+field+")");
+      mySocket.emit('guessed', field);
     }
 
     // set up the game
@@ -176,6 +223,10 @@ angular.module('appControllers', []).
           width: '100%'
         }, data.duration*1000, 'linear');
       $scope.preload_song(data.preload);
+      // TODO: move these
+      $scope.song.name = data.name;
+      $scope.song.artist = data.artist;
+      // 
     });
 
     // preload a song
@@ -185,12 +236,19 @@ angular.module('appControllers', []).
       $scope.preload_song(data.preload);
     });
 
-    // give answer at the end of the song
+    // receive answer at the end of the song
     $scope.songs = [];
     mySocket.forward('answer_song', $scope);
     $scope.$on('socket:answer_song', function (ev, data) {
       console.log('← answer_song', data);
       $scope.songs.unshift(data);
+    });
+
+    // receive games' results
+    $scope.songs = [];
+    mySocket.forward('game_results', $scope);
+    $scope.$on('socket:game_results', function (ev, data) {
+      console.log('← game_results', data);
     });
 
   });
