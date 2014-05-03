@@ -91,6 +91,23 @@ angular.module('appControllers', []).
       // TODO: real preloading
     }
 
+    // play a song
+    $scope.jplayer = $("#jquery_jplayer").jPlayer({
+      swfPath: "/bower_components/jplayer/jquery.jplayer"
+    });
+    $scope.play_song = function(url, duration){
+      $scope.playing = url;
+
+      // play the song for X seconds
+      $scope.jplayer.
+        jPlayer("setMedia", {mp3: url}).
+        jPlayer("play");
+
+      setTimeout(function(){
+        $scope.jplayer.jPlayer("stop");
+      }, duration);
+    }
+
     // set up the game
     $http.
       get('/api/game/'+$routeParams.game_id).
@@ -145,12 +162,11 @@ angular.module('appControllers', []).
       $scope.notify(data.name + " has left the game");
     });
 
-    // notify one has left the game
+    // play a new song
     mySocket.forward('play_song', $scope);
     $scope.$on('socket:play_song', function (ev, data) {
       console.log('← play_song', data);
-      $scope.playing = data.song.song_stream_url;
-      $scope.preload_song(data.preload);
+      $scope.play_song(data.play, data.duration*1000);
       $('#track-progress').
         stop().
         css({
@@ -158,7 +174,8 @@ angular.module('appControllers', []).
         }).
         animate({
           width: '100%'
-        }, 30000, 'linear');
+        }, data.duration*1000, 'linear');
+      $scope.preload_song(data.preload);
     });
 
     // preload a song
@@ -166,6 +183,14 @@ angular.module('appControllers', []).
     $scope.$on('socket:preload_song', function (ev, data) {
       console.log('← preload_song', data);
       $scope.preload_song(data.preload);
+    });
+
+    // give answer at the end of the song
+    $scope.songs = [];
+    mySocket.forward('answer_song', $scope);
+    $scope.$on('socket:answer_song', function (ev, data) {
+      console.log('← answer_song', data);
+      $scope.songs.unshift(data);
     });
 
   });

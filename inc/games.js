@@ -54,7 +54,6 @@ module.exports = {
       var game_id = this.create_game(songz, theme_id);
       console.log("New player created game # "+game_id);
       this.start_game(songz, game_id);
-
     }
 
     return game_id;
@@ -91,11 +90,7 @@ module.exports = {
 
     // start playing in X seconds
     setTimeout(function(){
-      songz.games[game_id].interval = setInterval(function(){
-
-        this.play_next_song(songz, game_id);
-        
-      }, config.game.interval_timer*1000);
+      Games.play_next_song(songz, game_id);
     }, config.game.start_timer*1000);
 
   },
@@ -104,6 +99,7 @@ module.exports = {
     PLAY NEXT SONG
    */
   play_next_song: function(songz, game_id){
+    var Games = this;
 
     // if no more song, end the game
     if( songz.games[game_id].songs.length==0 ){
@@ -112,13 +108,28 @@ module.exports = {
     }
 
     // start playing next song
+    var song = songz.games[game_id].songs.shift()[0];
     var data = {
-      song: songz.games[game_id].songs.shift()[0],
+      play: song.song_stream_url,
+      duration: config.game.song_duration,
       preload: songz.games[game_id].songs.length>0 ?
         songz.games[game_id].songs[0][0].song_stream_url : null
     }
-    console.log("→ play_song".magenta, data.song.song_artist+" - "+data.song.song_name, game_id.yellow);
+    console.log("→ play_song".magenta, song.song_artist+" - "+song.song_name, game_id.yellow);
     songz.io.sockets.in(game_id).emit("play_song", data);
+
+    // send results at the end of the song
+    setTimeout(function(){
+      console.log("→ answer_song".magenta, song.song_artist+" - "+song.song_name, game_id.yellow);
+      songz.io.sockets.in(game_id).emit("answer_song", song);
+      
+      // then play next song in X seconds
+      setTimeout(function(){
+        Games.play_next_song(songz, game_id);
+      }, config.game.interval_timer*1000);
+      
+    }, config.game.song_duration*1000 + 1000);
+    
 
   },
 

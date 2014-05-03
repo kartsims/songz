@@ -8,6 +8,8 @@ module.exports = {
     nb_songs: 15,
     // time in seconds before a new game starts playing the first song
     start_timer: 1,
+    // duration of songs in seconds
+    song_duration: 4,
     // time in seconds between each song
     interval_timer: 3
   },
