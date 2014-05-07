@@ -57,15 +57,14 @@ io.sockets.on('connection', function(socket){
     songz.users[socket.id].game_id = game_id;
 
     // check that the user isn't already in this game
-    for(var i in songz.games[game_id].players){
-      if( songz.games[game_id].players[i]==socket.id ){
-        console.log("User already in game !".red);
-        return;
-      }
+    if( typeof(songz.games[game_id].players[socket.id])!='undefined' ){
+      console.log("User already in game !".red);
+      return;
     }
 
     // let user join the game
-    songz.games[game_id].players.push(socket.id);
+    songz.games[game_id].players[socket.id] = songz.users[socket.id];
+    songz.games[game_id].players[socket.id].score = 0;
 
     // console log
     console.log(songz.users[socket.id].name + " has joined the game # "+game_id);

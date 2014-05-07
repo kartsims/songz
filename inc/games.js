@@ -8,25 +8,15 @@ module.exports = {
    */
   players_list: function(songz, game_id){
 
-    var game_data = songz.games[game_id],
-      players = [];
-
-    for(var key in game_data.players){
-      var socket_id = game_data.players[key];
-      // if player doesn't exist anymore, remove it
+    // check that all players are still here
+    for(var socket_id in songz.games[game_id]){
       if( typeof(songz.users[socket_id])=='undefined' ){
-        songz.games[game_id].players.splice(key, 1);
-      }
-      // add to players list
-      else {
-        players.push({
-          id: socket_id,
-          name: songz.users[socket_id].name
-        });
+        delete songz.games[game_id].players[socket_id];
       }
     }
+    // TODO: maybe remove the above ?
 
-    return players;
+    return songz.games[game_id].players;
   },
 
   /*
@@ -67,7 +57,7 @@ module.exports = {
       var game_id = theme_id + '-' + Date.now();
       songz.games[game_id] = {
           theme_id: theme_id,
-          players: [],
+          players: {},
           songs: [],
           results: []
       };
@@ -121,7 +111,8 @@ module.exports = {
       name: song.song_name_encode,
       // 
       play: song.song_stream_url,
-      duration: config.game.song_duration
+      duration: config.game.song_duration,
+      players: this.players_list(songz, game_id)
     }
     console.log("→ play_song".magenta, song.song_artist+" - "+song.song_name, game_id.yellow);
     songz.io.sockets.in(game_id).emit("play_song", data);
@@ -149,8 +140,8 @@ module.exports = {
   finish: function(songz, game_id){
 
     // notify every player of the result
-    console.log("→ game_results".magenta, new String("game_id").yellow);
-    songz.io.sockets.in(game_id).emit("game_results", songz.games[game_id].results);
+    console.log("→ game_results".magenta, new String(game_id).yellow);
+    songz.io.sockets.in(game_id).emit("game_results", this.players_list(songz, game_id));
     
     // remove from global object
     delete songz.games[game_id];
@@ -173,11 +164,7 @@ module.exports = {
     }
 
     // remove user from the game
-    for(var key in songz.games[game_id].players){
-      if( songz.games[game_id].players[key]==socket.id ){
-        songz.games[game_id].players.splice(key, 1);
-      }
-    }
+    delete songz.games[game_id].players[socket.id];
     
     // console log
     console.log(songz.users[socket.id].name + " has left the game # "+game_id);
@@ -209,8 +196,8 @@ module.exports = {
 
     var game_id = songz.users[socket.id].game_id;
 
-    // add this user to the results
-    songz.games[game_id].songs[0].results[field].push(socket.id);
+    // update user's score
+    songz.games[game_id].players[socket.id].score++;
   }
 
 }

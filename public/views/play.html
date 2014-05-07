@@ -9,6 +9,14 @@
 <a href="" ng-click="leaveGame()">< LEAVE THE GAME</a>
 <hr/>
 
+<div ng-hide="loading" ng-show="results">
+    <ul>
+        <li ng-repeat="player in results">
+            {{player.name}} >> {{player.score}}
+        </li>
+    </ul>
+</div>
+
 <div ng-show="loading">
     LOADING...
 </div>
@@ -37,7 +45,7 @@
     <h4>PLAYERS ({{nb_online}})</h4>
     <ul>
         <li ng-repeat="player in players">
-            {{player.name}}
+            {{player.name}} ({{player.score}})
         </li>
     </ul>
 

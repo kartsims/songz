@@ -155,6 +155,11 @@ angular.module('appControllers', []).
       mySocket.emit('guessed', field);
     }
 
+    // show results when the game is finished
+    $scope.show_results = function(data){
+      $scope.results = data;
+    }
+
     // set up the game
     $http.
       get('/api/game/'+$routeParams.game_id).
@@ -223,6 +228,12 @@ angular.module('appControllers', []).
           width: '100%'
         }, data.duration*1000, 'linear');
       $scope.preload_song(data.preload);
+      // and update players list
+      $scope.players = data.players;
+      $scope.nb_online = data.players.length;
+      // reset guess field
+      $('#my-guess').val('');
+
       // TODO: move these
       $scope.song.name = data.name;
       $scope.song.artist = data.artist;
@@ -236,7 +247,7 @@ angular.module('appControllers', []).
       $scope.preload_song(data.preload);
     });
 
-    // receive answer at the end of the song
+    // receive the good answer at the end of the song
     $scope.songs = [];
     mySocket.forward('answer_song', $scope);
     $scope.$on('socket:answer_song', function (ev, data) {
@@ -249,6 +260,7 @@ angular.module('appControllers', []).
     mySocket.forward('game_results', $scope);
     $scope.$on('socket:game_results', function (ev, data) {
       console.log('← game_results', data);
+      $scope.show_results(data);
     });
 
   });
