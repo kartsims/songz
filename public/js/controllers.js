@@ -155,11 +155,6 @@ angular.module('appControllers', []).
       mySocket.emit('guessed', field);
     }
 
-    // show results when the game is finished
-    $scope.show_results = function(data){
-      $scope.results = data;
-    }
-
     // set up the game
     $http.
       get('/api/game/'+$routeParams.game_id).
@@ -255,13 +250,32 @@ angular.module('appControllers', []).
       $scope.songs.unshift(data);
     });
 
-    // receive games' results
+    // redirect to games' results
     $scope.songs = [];
-    mySocket.forward('game_results', $scope);
-    $scope.$on('socket:game_results', function (ev, data) {
-      console.log('← game_results', data);
-      $scope.show_results(data);
+    mySocket.forward('game_finished', $scope);
+    $scope.$on('socket:game_finished', function (ev, data) {
+      console.log('← game_finished', data);
+      $location.url('/results/'+data);
     });
+
+  }).
+
+  /*
+    GAME RESULTS
+   */
+  controller('resultsController', function($scope, $http, $routeParams, $location) {
+
+    // when landing on the page, get the game results
+    $http.
+      get('/api/results/'+$routeParams.game_id).
+      success(function(data) {
+        console.log(data);
+        $scope.players = data.results.players;
+        $scope.theme = data.theme;
+      }).
+      error(function(data) {
+        console.log('Error: ' + data);
+      });
 
   });
 

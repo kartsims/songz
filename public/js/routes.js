@@ -13,6 +13,11 @@ angular.module('appRoutes', []).
         templateUrl: 'views/play.html',
         controller: 'gameController'
       }).
+      // game results
+      when('/results/:game_id', {
+        templateUrl: 'views/results.html',
+        controller: 'resultsController'
+      }).
       otherwise({
         redirectTo: '/'
       });

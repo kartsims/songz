@@ -140,8 +140,25 @@ module.exports = {
   finish: function(songz, game_id){
 
     // notify every player of the result
-    console.log("→ game_results".magenta, new String(game_id).yellow);
-    songz.io.sockets.in(game_id).emit("game_results", this.players_list(songz, game_id));
+    console.log("→ game_finished".magenta, new String(game_id).yellow);
+    songz.io.sockets.in(game_id).emit("game_finished", game_id);
+
+    // save results to database
+    var players = this.players_list(songz, game_id),
+      db_record = {
+        _id: game_id,
+        theme_id: songz.games[game_id].theme_id,
+        finished_at: Date.now(),
+        players: []
+      };
+    var game_players = this.players_list(songz, game_id);
+    for (var id in game_players) {
+      db_record.players.push({
+        'name': game_players[id].name,
+        'score': game_players[id].score
+      });
+    }
+    db.get('results').insert(db_record);
     
     // remove from global object
     delete songz.games[game_id];

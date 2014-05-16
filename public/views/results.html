@@ -1,0 +1,18 @@
+<div ng-show="loading">
+    LOADING...
+</div>
+
+<div ng-hide="loading">
+
+    <h4>Game results ({{theme.name}})</h4>
+    <ul>
+        <li ng-repeat="player in players">
+            {{player.name}} ({{player.score}})
+        </li>
+    </ul>
+
+    <a href="/">Start another game</a>
+    
+</div>
+
+

@@ -57,4 +57,22 @@ router.get('/game/:id', function(req, res) {
 });
 
 
+/*
+  GAME RESULTS
+ */
+router.get('/results/:id', function(req, res) {
+  var game_id = req.params.id;
+
+  req.db.get('results').findById(game_id, function (err, results){
+    req.db.get('themes').findById(results.theme_id, function (err, theme){
+      res.send({
+        theme: theme,
+        results: results
+      });
+    });
+  });
+  
+});
+
+
 module.exports = router;
