@@ -1,0 +1,60 @@
+body {
+	background-color: #75bdc9;
+	text-align: center;
+	color: #fff;
+	font-family: 'Open Sans', sans-serif;
+	font-weight: 300;
+	padding: 30px 0;
+}
+ul {
+	text-align: left;
+	padding-left: 0;
+}
+ul li {
+	list-style: none;
+}
+
+#app {
+}
+
+.header {
+	color: #e3f2f4;
+}
+
+footer {
+	padding-top: 60px;
+}
+
+form.pick-theme {
+	padding: 80px 0 40px;
+}
+
+/* PLAY THE GAME */
+ul.tracklist li {
+	line-height: 6px;
+	clear: left;
+	padding-top: 14px;
+}
+ul.tracklist strong {
+	display: block;
+	line-height: 30px;
+}
+ul.tracklist img {
+	float: left;
+	margin-right: 10px;
+}
+ul.game-players .score {
+	float: right;
+}
+form.guess-song {
+	padding: 30px 0 20px;
+}
+#notifications {
+	font-size: .9em;
+}
+#notifications .date {
+	font-size: .9em;
+	color: #e3f2f4;
+	width: 36px;
+	display: inline-block;
+}

@@ -1,14 +1,17 @@
-<ul>
-    <li ng-repeat="theme in themes">
-        <a href="#" ng-click="joinGame(theme._id)">{{theme.name}}</a>
-    </li>
-</ul>
+<div class="header">{{nb_online}} player{{nb_online>1 ? 's' : ''}} online</div>
 
-<ul>
-    <li ng-repeat="game in games">
-        <strong>{{game.theme_id}}</strong>
-        ({{game.players.length}})
-    </li>
-</ul>
+<form class="pick-theme form-inline" ng-submit="joinGame()">
 
-<p>{{nb_online}} players online</p>
+    <h4>Pick a theme</h4>
+    
+    <div class="form-group">
+        <select class="form-control" name="theme_id">
+            <option ng-repeat="theme in themes" value="{{theme._id}}">{{theme.name}}</option>
+        </select>
+        <button type="submit" class="btn btn-primary">Go!</button>
+    </div>
+</form>
+
+
+
+

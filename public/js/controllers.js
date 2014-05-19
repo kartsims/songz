@@ -29,7 +29,8 @@ angular.module('appControllers', []).
       });
 
     // request to join a game
-    $scope.joinGame = function(theme_id){
+    $scope.joinGame = function(){
+      var theme_id = $('form select[name=theme_id]').val();
       $http.
         get('/api/join/'+theme_id).
         success(function(data) {
@@ -50,17 +51,25 @@ angular.module('appControllers', []).
     $scope.loading = true;
 
     // change my username
-    $scope.changeMyName = function(){
+    $scope.change_name = function(){
       console.log("→ change_name", $scope.me.name);
       mySocket.emit('change_name', {
         id: $scope.me.id,
         name: $scope.me.name
       });
       $.cookie("username", $scope.me.name);
+      $scope.toggle_name_form();
+      return false;
+    };
+
+    // hide "change my name" form
+    $scope.toggle_name_form = function(){
+      $('#form-name').toggle();
+      $('.header').toggle();
     };
 
     // leave the game
-    $scope.leaveGame = function(){
+    $scope.leave_game = function(){
       console.log("→ leave_game");
       mySocket.emit('leave_game', {
         id: $scope.me.id
@@ -77,12 +86,19 @@ angular.module('appControllers', []).
     $scope.me = {
       name: username
     };
-    $scope.changeMyName();
+    $scope.change_name();
 
     // display a notification
     $scope.notify = function(html){
       console.log("notify", html);
-      $('<li>').html(html).appendTo($('#notifications'));
+      var now = new Date();
+      var date = new String(now.getMinutes());
+      if(date.length<2)
+        date = "0"+date;
+      date = now.getHours()+":"+date;
+      if(date.length<5)
+        date = "0"+date;
+      $('<li>').html("<span class=\"date\">"+date+"</span>"+html).appendTo($('#notifications'));
     }
 
     // preload a song's URL
@@ -169,6 +185,8 @@ angular.module('appControllers', []).
           
           console.log('→ join_game', $routeParams.game_id);
           mySocket.emit('join_game', {game_id:$routeParams.game_id});
+
+          $scope.notify("You joined the game");
         }
       }).
       error(function(data) {

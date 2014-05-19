@@ -11,6 +11,7 @@
     "socket.io-client": "0.9.16",
     "jquery": "2.1.0",
     "jquery-cookie": "1.4.0",
-    "jplayer": "2.6.1"
+    "jplayer": "2.6.1",
+    "bootstrap": "3.1.1"
   }
 }
