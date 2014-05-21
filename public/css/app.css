@@ -43,8 +43,20 @@ ul.tracklist img {
 	float: left;
 	margin-right: 10px;
 }
-ul.game-players .score {
+#game-players h4 {
+	text-transform: uppercase;
+	font-weight: 300;
+	font-size: 1.4em;
+	padding-bottom: .3em;
+}
+#game-players ul .score {
 	float: right;
+}
+#game-players ul .position {
+	float: right;
+	background: #fff;
+	color: #000;
+	padding: 2px 4px;
 }
 form.guess-song {
 	padding: 40px 0 30px;
@@ -83,8 +95,12 @@ form.guess-song {
 /* RESULTS PAGE */
 #game-results h4 {
 	padding: 50px 0 20px;
+	text-transform: uppercase;
+	font-weight: normal;
+	font-size: 1.5em;
 }
 #game-results ul {
 	text-align: center;
 	margin-bottom: 50px;
+	font-size: 1.2em;
 }

@@ -238,6 +238,13 @@ angular.module('appControllers', []).
       $scope.notify(data.name + " has left the game");
     });
 
+    // notify one has guessed
+    mySocket.forward('player_position', $scope);
+    $scope.$on('socket:player_position', function (ev, data) {
+      console.log('← player_position', data);
+      $scope.players[data.socket_id].position = data.position;
+    });
+
     // play a new song
     mySocket.forward('play_song', $scope);
     $scope.$on('socket:play_song', function (ev, data) {

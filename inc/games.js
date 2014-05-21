@@ -59,7 +59,8 @@ module.exports = {
           theme_id: theme_id,
           players: {},
           songs: [],
-          results: []
+          results: [],
+          players_positions: []
       };
 
       // pick X songs
@@ -102,6 +103,9 @@ module.exports = {
       Games.finish(songz, game_id);
       return;
     }
+
+    // reset players' positions for this round
+    songz.games[game_id].players_positions = [];
 
     // start playing next song
     var song = songz.games[game_id].songs[0];
@@ -215,6 +219,17 @@ module.exports = {
 
     // update user's score
     songz.games[game_id].players[socket.id].score++;
+
+    // save position
+    songz.games[game_id].players_positions.push(socket.id);
+    var position = songz.games[game_id].players_positions.length;
+
+    // send player's position
+    console.log("→ player_position".magenta, position, game_id.yellow);
+    songz.io.sockets.in(game_id).emit("player_position", {
+      socket_id: socket.id,
+      position: position
+    });
   }
 
 }

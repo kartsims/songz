@@ -45,11 +45,11 @@
         </div>
         <div class="col-md-6">
             
-            <div ng-show="preload"><em>Preloading: {{preload}}</em></div>
             <div id="jquery_jplayer"></div>
             <div style="width:100%; height:20px; background: #eee">
                 <div id="track-progress" style="float:left;height:20px;background:#c00"></div>
             </div>
+            <div ng-show="preload"><em>Preloading: {{preload}}</em></div>
 
             <ul class="tracklist">
                 <li ng-repeat="song in songs">
@@ -61,14 +61,17 @@
 
         </div>
         <div class="col-md-3">
-            
-            <h4>Positions</h4>
-            <ul class="game-players">
-                <li ng-repeat="player in players">
-                    <div class="score">{{player.score}}</div>
-                    {{player.name}}
-                </li>
-            </ul>
+                
+            <div id="game-players">
+                <h4>Players</h4>
+                <ul>
+                    <li ng-repeat="player in players | orderBy:player.position">
+                        <div class="score">{{player.score}}</div>
+                        <div class="position" ng-show="player.position">{{player.position}}</div>
+                        {{player.name}}
+                    </li>
+                </ul>
+            </div>
             
         </div>
 
