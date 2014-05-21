@@ -4,8 +4,8 @@ angular.module('appControllers', []).
     SOCKET.IO IMPLEMENTATION
     > is this the best place to put it ?
    */
-  factory('mySocket', function (socketFactory) {
-    var myIoSocket = io.connect('http://localhost:3030');
+  factory('mySocket', function (socketFactory, $location) {
+    var myIoSocket = io.connect('http://' + $location.$$host + ':3030');
     return socketFactory({
       ioSocket: myIoSocket
     });
