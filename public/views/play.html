@@ -20,19 +20,20 @@
 
     <form class="guess-song row" role="form" ng-submit="guess_song()">
 
-        <div class="col-xs-7">
-            <input class="form-control input-lg" type="text" id="my-guess" placeholder="Type here the song's name or artist"/>
-        </div>
-        <div class="col-xs-3">
-            <button type="submit" class="btn btn-lg btn-primary btn-block">Guess!</button>
+        <div class="col-xs-10">
+            <div class="input-group">
+                <input class="form-control input-lg" type="text" id="my-guess" placeholder="Type here the song's name or artist"/>
+                <span class="input-group-btn">
+                    <button type="submit" class="btn btn-lg btn-primary">Guess!</button>
+                </span>
+            </div>
+            <div id="guess-results"></div>
         </div>
         <div class="col-xs-2">
-            <div class="guessed" id="guessed-artist" title="You found the artist !"></div>
-            <div class="guessed" id="guessed-name" title="You found the name of this song !"></div>
-            <div id="medal"></div>
+            <div class="guessed" id="guessed-artist" title="You found the artist !"><i class="glyphicon glyphicon-music"></i></div>
+            <div class="guessed" id="guessed-name" title="You found the name of this song !"><i class="glyphicon glyphicon-user"></i></div>
         </div>
 
-        <div id="guess-results"></div>
     </form>
 
     <div class="row">

@@ -120,6 +120,7 @@ angular.module('appControllers', []).
         jPlayer("play");
       
       $('#my-guess').val('');
+      $('.guessed').removeClass('active');
 
       setTimeout(function(){
         $scope.jplayer.jPlayer("stop");
@@ -131,9 +132,8 @@ angular.module('appControllers', []).
       artist: null,
       name: null
     }
-    $('.guessed').tooltip({
-      trigger: 'manual'
-    });
+    $('.guessed').tooltip({ trigger: 'manual' });
+    $('#my-guess').tooltip({ trigger: 'manual' });
     $scope.guess_song = function(){
       var a = FuzzySet();
       a.add($scope.song.artist);
@@ -142,10 +142,16 @@ angular.module('appControllers', []).
       for(var i in x){
         var score = x[i][0].toFixed(2);
         if( score<.4 ){
-          $('#guess-results').html("Try again...");
+          $('#guess-results').css('opacity', 1).html("Try again...");
+          $timeout(function(){
+            $('#guess-results').animate({opacity:0}, 200);
+          }, 1600);
         }
         else if( score<.75 ){
-          $('#guess-results').html("Getting close...");
+          $('#guess-results').css('opacity', 1).html("Getting close...");
+          $timeout(function(){
+            $('#guess-results').animate({opacity:0}, 200);
+          }, 1600);
         }
         // artist found
         else if( x[i][1]==$scope.song.artist ){
@@ -171,7 +177,6 @@ angular.module('appControllers', []).
       $timeout(function(){
         $('#guessed-'+field).tooltip('hide');
       }, 1000);
-      $('#medal').addClass("active");
       console.log("→ guessed ("+field+")");
       mySocket.emit('guessed', field);
     }
