@@ -11,7 +11,7 @@
   	"url": "https://github.com/kartsims/songz"
   },
   "scripts": {
-    "postinstall": "bower install",
+    "postinstall": "node_modules/bower/bin/bower install",
     "start": "node ./bin/www"
   },
   "dependencies": {
