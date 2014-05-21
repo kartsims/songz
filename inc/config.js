@@ -28,7 +28,7 @@ if (process.env.SONGZ_ENVIRONMENT=='production'){
     db: {
       host: 'localhost',
       port: 27017,
-      database: 'songz_simon'
+      database: 'songz_nodejs'
     }
 
   }
