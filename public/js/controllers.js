@@ -21,7 +21,6 @@ angular.module('appControllers', []).
       get('/api/home').
       success(function(data) {
         $scope.themes = data.themes;
-        $scope.games = data.games;
         $scope.nb_online = data.nb_online;
       }).
       error(function(data) {

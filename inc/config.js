@@ -1,6 +1,8 @@
 // PRODUCTION CONFIG
 if (process.env.SONGZ_ENVIRONMENT=='production'){
 
+  console.log("Load config [PROD]");
+
   module.exports = {
 
     // game parameters
@@ -34,6 +36,8 @@ if (process.env.SONGZ_ENVIRONMENT=='production'){
 }
 // SIMON DEV CONFIG
 else{
+
+  console.log("Load config [DEV SIMON]");
 
   module.exports = {
 
