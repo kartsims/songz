@@ -45,7 +45,7 @@ angular.module('appControllers', []).
   /*
     PLAY THE GAME
    */
-  controller('gameController', function($scope, $http, $routeParams, $location, mySocket) {
+  controller('gameController', function($scope, mySocket, $http, $routeParams, $location, $timeout) {
 
     $scope.loading = true;
 
@@ -68,6 +68,8 @@ angular.module('appControllers', []).
     };
 
     // leave the game
+    // TODO: leave the game when leaving the page
+    // + ask for confirmation before leaving
     $scope.leave_game = function(){
       console.log("→ leave_game");
       mySocket.emit('leave_game', {
@@ -129,6 +131,9 @@ angular.module('appControllers', []).
       artist: null,
       name: null
     }
+    $('.guessed').tooltip({
+      trigger: 'manual'
+    });
     $scope.guess_song = function(){
       var a = FuzzySet();
       a.add($scope.song.artist);
@@ -157,15 +162,16 @@ angular.module('appControllers', []).
 
     // player guessed right
     $scope.guessed = function(field){
-      if(field=='artist'){
-        $('#guess-results').html("You found the artist !");
-      }
-      else if(field=='name'){
-        $('#guess-results').html("You found the name of this song !");
-      }
-      else{
+      if(field!='artist' && field!='name'){
         return;
       }
+      $('#guessed-'+field)
+        .tooltip('show')
+        .addClass("active");
+      $timeout(function(){
+        $('#guessed-'+field).tooltip('hide');
+      }, 1000);
+      $('#medal').addClass("active");
       console.log("→ guessed ("+field+")");
       mySocket.emit('guessed', field);
     }
@@ -181,7 +187,7 @@ angular.module('appControllers', []).
         // if the game is up and running
         else{
           $scope.loading = false;
-          
+
           console.log('→ join_game', $routeParams.game_id);
           mySocket.emit('join_game', {game_id:$routeParams.game_id});
 
@@ -198,6 +204,7 @@ angular.module('appControllers', []).
 
     // update users list
     $scope.players = [];
+    $scope.nb_online = 0;
     mySocket.forward('players_list', $scope);
     $scope.$on('socket:players_list', function (ev, data) {
       console.log('← players_list', data);

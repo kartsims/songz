@@ -47,7 +47,7 @@ ul.game-players .score {
 	float: right;
 }
 form.guess-song {
-	padding: 30px 0 20px;
+	padding: 40px 0 60px;
 }
 #notifications {
 	font-size: .9em;
@@ -57,4 +57,32 @@ form.guess-song {
 	color: #e3f2f4;
 	width: 36px;
 	display: inline-block;
+}
+.guessed {
+	display: inline-block;
+	width: 30px;
+	height: 30px;
+	margin-right: 10px;
+	margin-top: 6px;
+}
+#guessed-artist {
+	background-image: url(/img/play-artist-off.png);
+}
+#guessed-artist.active {
+	background-image: url(/img/play-artist-on.png);
+}
+#guessed-name {
+	background-image: url(/img/play-name-off.png);
+}
+#guessed-name.active {
+	background-image: url(/img/play-name-on.png);
+}
+#medal {
+	display: inline-block;
+	width: 30px;
+	background-image: url(/img/play-medal-off.png);
+	height: 30px;
+}
+#medal.active {
+	background-image: url(/img/play-medal-on.png);
 }

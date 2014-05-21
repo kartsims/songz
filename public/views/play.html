@@ -12,8 +12,6 @@
     <button type="button" class="btn btn-default" ng-click="toggle_name_form()">Cancel</button>
 </form>
 
-<a href="" ng-click="leave_game()">< LEAVE THE GAME</a>
-
 <div ng-show="loading">
     LOADING...
 </div>
@@ -22,11 +20,16 @@
 
     <form class="guess-song row" role="form" ng-submit="guess_song()">
 
-        <div class="col-xs-9">
+        <div class="col-xs-7">
             <input class="form-control input-lg" type="text" id="my-guess" placeholder="Type here the song's name or artist"/>
         </div>
         <div class="col-xs-3">
-            <button type="submit" class="btn btn-lg btn-primary btn-block">Give a guess</button>
+            <button type="submit" class="btn btn-lg btn-primary btn-block">Guess!</button>
+        </div>
+        <div class="col-xs-2">
+            <div class="guessed" id="guessed-artist" title="You found the artist !"></div>
+            <div class="guessed" id="guessed-name" title="You found the name of this song !"></div>
+            <div id="medal"></div>
         </div>
 
         <div id="guess-results"></div>
