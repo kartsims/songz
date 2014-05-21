@@ -119,7 +119,7 @@ angular.module('appControllers', []).
         jPlayer("setMedia", {mp3: url}).
         jPlayer("play");
       
-      $('#my-guess').val('');
+      $('#my-guess').val('').focus();
       $('.guessed').removeClass('active');
 
       setTimeout(function(){

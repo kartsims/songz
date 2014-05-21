@@ -4,14 +4,18 @@
 
 <div ng-hide="loading">
 
-    <h4>Game results ({{theme.name}})</h4>
-    <ul>
-        <li ng-repeat="player in players">
-            {{player.name}} ({{player.score}})
-        </li>
-    </ul>
+    <div id="game-results">
+        
+        <h4>Players Positions</h4>
+        <ul class="results">
+            <li ng-repeat="player in players">
+                {{player.name}} ({{player.score}})
+            </li>
+        </ul>
 
-    <a href="/">Start another game</a>
+        <a href="/play/{{theme._id}}-x" class="btn btn-primary">Start another game</a>
+        <a href="/" class="btn btn-default">Change theme</a>
+    </div>
     
 </div>
 

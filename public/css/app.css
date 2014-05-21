@@ -79,3 +79,12 @@ form.guess-song {
 	padding-top: .2em;
 	text-align: left;
 }
+
+/* RESULTS PAGE */
+#game-results h4 {
+	padding: 50px 0 20px;
+}
+#game-results ul {
+	text-align: center;
+	margin-bottom: 50px;
+}
