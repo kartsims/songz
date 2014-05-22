@@ -1,8 +1,7 @@
-<div class="header">
-    {{nb_online}} currently playing -
-    you are identified as <strong>{{me.name}}</strong>
-    <a href="#" class="btn btn-sm" ng-click="toggle_name_form()">Edit</a>
-</div>
+<p class="top-page">
+    You are identified as <strong>{{me.name}}</strong>
+    <a href="" class="btn btn-sm" ng-click="toggle_name_form()">Edit</a>
+</p>
 <form class="form-inline" id="form-name" ng-submit="change_name()" role="form">
     <div class="form-group">
         <label>Choose your name :</label>

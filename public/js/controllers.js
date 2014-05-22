@@ -64,19 +64,19 @@ angular.module('appControllers', []).
     // hide "change my name" form
     $scope.toggle_name_form = function(){
       $('#form-name').toggle();
-      $('.header').toggle();
     };
 
-    // leave the game
-    // TODO: leave the game when leaving the page
-    // + ask for confirmation before leaving
-    $scope.leave_game = function(){
-      console.log("→ leave_game");
-      mySocket.emit('leave_game', {
-        id: $scope.me.id
-      });
-      $location.url('/');
-    };
+    // confirm before leaving
+    $scope.$on('$locationChangeStart', function (event, next, current) {
+      if (!confirm("Are you sure you want to leave this game ?")) {
+        event.preventDefault();
+      }
+      else {
+        mySocket.emit('leave_game', {
+          id: $scope.me.id
+        });
+      }
+    });
 
     // look for saved username or pick a random one
     var username = typeof($.cookie('username'))=="undefined" ?
