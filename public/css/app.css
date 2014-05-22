@@ -49,20 +49,36 @@ ul.tracklist img {
 	font-size: 1.4em;
 	padding-bottom: .3em;
 }
+#game-players .is_me .name {
+	font-weight: 500;
+	font-style: italic;
+}
+#game-players li {
+	padding-bottom: .4em;
+}
 #game-players ul .score {
-	float: right;
+	text-align: center;
 }
 #game-players ul .position {
-	float: right;
-	background: #fff;
-	color: #000;
-	padding: 2px 4px;
+	text-align: right;
+}
+#game-players ul .position span {
+	background: #568c95;
+	color: #fff;
+	font-size: .9em;
+	font-weight: 500;
+	padding: .1em .4em;
+	border-radius: 2px;
 }
 form.guess-song {
 	padding: 40px 0 30px;
 }
 #notifications {
 	font-size: .9em;
+	line-height: .9;
+}
+#notifications li {
+	padding-bottom: .6em;
 }
 #notifications .date {
 	font-size: .9em;

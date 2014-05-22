@@ -99,7 +99,9 @@ angular.module('appControllers', []).
       date = now.getHours()+":"+date;
       if(date.length<5)
         date = "0"+date;
-      $('<li>').html("<span class=\"date\">"+date+"</span>"+html).appendTo($('#notifications'));
+      $('<li>').
+        html("<span class=\"date\">"+date+"</span>"+html).
+        prependTo($('#notifications'));
     }
 
     // preload a song's URL
@@ -206,6 +208,14 @@ angular.module('appControllers', []).
     /*
       SOCKET CUSTOM EVENTS
      */
+
+    // get my socket ID
+    $scope.socket_id = null;
+    mySocket.forward('socket_id', $scope);
+    $scope.$on('socket:socket_id', function (ev, data) {
+      console.log('← socket_id', data);
+      $scope.socket_id = data;
+    });
 
     // update users list
     $scope.players = [];

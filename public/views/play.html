@@ -43,7 +43,7 @@
             <ul id="notifications"></ul>
 
         </div>
-        <div class="col-md-6">
+        <div class="col-md-5">
             
             <div id="jquery_jplayer"></div>
             <div style="width:100%; height:20px; background: #eee">
@@ -60,15 +60,23 @@
             </ul>
 
         </div>
-        <div class="col-md-3">
+        <div class="col-md-4">
                 
             <div id="game-players">
                 <h4>Players</h4>
                 <ul>
-                    <li ng-repeat="player in players | orderBy:player.position">
-                        <div class="score">{{player.score}}</div>
-                        <div class="position" ng-show="player.position">{{player.position}}</div>
-                        {{player.name}}
+                    <li ng-repeat="(id, player) in players | orderBy:position" ng-class="{is_me: id==socket_id}">
+                        <div class="row">
+                            <div class="position col-xs-2">
+                                <span ng-show="player.position">{{player.position}}</span>
+                            </div>
+                            <div class="name col-xs-8">
+                                {{player.name}}
+                            </div>
+                            <div class="score col-xs-2">
+                                {{player.score}}
+                            </div>
+                        </div>
                     </li>
                 </ul>
             </div>

@@ -26,6 +26,10 @@ io.sockets.on('connection', function(socket){
   };
   console.log("[connect]".magenta +" "+ socket.id.cyan);
 
+  // send him his socket ID
+  console.log("→ socket_id".magenta, socket.id.yellow);
+  socket.emit("socket_id", socket.id);
+
   /*
     SOCKET DISCONNECTED
    */
