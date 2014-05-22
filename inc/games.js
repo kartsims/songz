@@ -31,7 +31,7 @@ module.exports = {
 
       if(
         songz.games[id].theme_id == theme_id &&
-        songz.games[id].players.length < config.game.max_players
+        Object.keys(songz.games[id].players).length < config.game.max_players
       ){
         game_id = id;
         console.log("New player can join game # "+game_id);

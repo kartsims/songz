@@ -46,11 +46,11 @@ else{
       // max number of players in a game
       max_players: 15,
       // number of songs played in a game
-      nb_songs: 1,
+      nb_songs: 100,
       // time in seconds before a new game starts playing the first song
       start_timer: 1,
       // duration of songs in seconds
-      song_duration: 2000,
+      song_duration: 10,
       // time in seconds between each song
       interval_timer: 1
     },
