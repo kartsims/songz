@@ -4,15 +4,13 @@ Music quiz application based on Node.js, AngularJS and MongoDB
 
 ## Installation
 
-Songz requires a MongoDB instance, with the database installed.
+> Songz requires a MongoDB instance, with the database installed.
 
-**How-to install**
-
-- Run `npm install`
+- `npm install`
 
 - Set the environment variable `SONGZ_ENVIRONMENT` in your shell
 
-- Configure your database in `inc/config.js` using your SONGZ_ENVIRONMENT VARIABLE
+- Configure your database in `inc/config.js` using your `SONGZ_ENVIRONMENT` variable
 
 
 ## Usage
