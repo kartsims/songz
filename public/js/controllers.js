@@ -288,7 +288,7 @@ angular.module('appControllers', []).
       // reset guess field
       $('#my-guess').val('');
       // show nb songs left
-      $scope.nb_songs = (data.nb_songs_total-data.nb_songs_left) + ' / ' + data.nb_songs_total;
+      $scope.nb_songs = (data.nb_songs_total-data.nb_songs_left+1) + ' / ' + data.nb_songs_total;
 
       // TODO: move these (used to fuzzy compare with player's guess)
       $scope.song.name = data.name;
