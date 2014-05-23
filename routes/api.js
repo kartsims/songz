@@ -22,7 +22,6 @@ router.get('/home', function(req, res) {
  */
 router.get('/join/:theme_id', function(req, res) {
   var theme_id = req.params.theme_id;
-  console.log("New player wants to join theme # "+theme_id);
 
   // look for a game in this theme
   var game_id = Games.find_by_theme(songz, theme_id);

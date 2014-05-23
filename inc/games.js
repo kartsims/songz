@@ -1,5 +1,6 @@
 var config = require('./config'),
-  db = require('monk')(config.db.host+':'+config.db.port+'/'+config.db.database);;
+  db = require('monk')(config.db.host+':'+config.db.port+'/'+config.db.database)
+  debug = require('debug')('songz');
 
 module.exports = {
 
@@ -34,7 +35,7 @@ module.exports = {
         Object.keys(songz.games[id].players).length < config.game.max_players
       ){
         game_id = id;
-        console.log("New player can join game # "+game_id);
+        debug("New player can join game # " + game_id.yellow);
         break;
       }
 
@@ -42,7 +43,7 @@ module.exports = {
     // create a new game on this theme
     if( game_id === null ){
       var game_id = this.create_game(songz, theme_id);
-      console.log("New player created game # "+game_id);
+      console.log("New player created game # " + game_id.yellow);
       this.start_game(songz, game_id);
     }
 
@@ -118,14 +119,14 @@ module.exports = {
       duration: config.game.song_duration,
       players: this.players_list(songz, game_id)
     }
-    console.log("→ play_song".magenta, song.song_artist+" - "+song.song_name, game_id.yellow);
+    debug("→ play_song".magenta, song.song_artist+" - "+song.song_name, game_id.yellow);
     songz.io.sockets.in(game_id).emit("play_song", data);
 
     // send results at the end of the song
     setTimeout(function(){
       var result = songz.games[game_id].songs.shift();
       songz.games[game_id].results.push(result);
-      console.log("→ answer_song".magenta, song.song_artist+" - "+song.song_name, game_id.yellow);
+      debug("→ answer_song".magenta, song.song_artist+" - "+song.song_name, game_id.yellow);
       songz.io.sockets.in(game_id).emit("answer_song", result);
       
       // then play next song in X seconds
@@ -144,7 +145,7 @@ module.exports = {
   finish: function(songz, game_id){
 
     // notify every player of the result
-    console.log("→ game_finished".magenta, new String(game_id).yellow);
+    debug("→ game_finished".magenta, new String(game_id).yellow);
     songz.io.sockets.in(game_id).emit("game_finished", game_id);
 
     // save results to database
@@ -163,6 +164,9 @@ module.exports = {
       });
     }
     db.get('results').insert(db_record);
+
+    // console log
+    console.log("Game finished", game_id.yellow, db_record);
     
     // remove from global object
     delete songz.games[game_id];
@@ -188,17 +192,17 @@ module.exports = {
     delete songz.games[game_id].players[socket.id];
     
     // console log
-    console.log(songz.users[socket.id].name + " has left the game # "+game_id);
+    console.log(songz.users[socket.id].name + " has left the game # " + game_id.yellow);
 
     // notify other players
-    console.log("→ left_game".magenta, songz.users[socket.id].name, game_id.yellow);
+    debug("→ left_game".magenta, songz.users[socket.id].name, game_id.yellow);
     socket.broadcast.to(game_id).emit('left_game', {
       name: songz.users[socket.id].name
     });
 
     // update other players' list
     var data = this.players_list(songz, game_id);
-    console.log("→ players_list".magenta, data, game_id.yellow);
+    debug("→ players_list".magenta, data, game_id.yellow);
     socket.broadcast.to(game_id).emit('players_list', data);
 
     // leave socket.io's room
@@ -225,7 +229,7 @@ module.exports = {
     var position = songz.games[game_id].players_positions.length;
 
     // send player's position
-    console.log("→ player_position".magenta, position, game_id.yellow);
+    debug("→ player_position".magenta, position, game_id.yellow);
     songz.io.sockets.in(game_id).emit("player_position", {
       socket_id: socket.id,
       position: position

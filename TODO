@@ -2,8 +2,7 @@ TODO !
 
 - changer l'ordre des joueurs au fur et a mesure qu'ils répondent
 
-- sur la page de jeu, afficher le nom du joueur en haut et le lien pour le modifier
+- bugfix quand le joueur répond à l'artiste et au nom de la chanson, ca met à jour sa position dans le classement
 
 - check sound preloading and sync between differents screens
-
 

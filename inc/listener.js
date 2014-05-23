@@ -1,7 +1,8 @@
 var config = require('./config'),
   io = require('socket.io').listen(config.socket.port).set('log level', 1)
   db = require('monk')(config.db.host+':'+config.db.port+'/'+config.db.database)
-  Games = require('./games');
+  Games = require('./games')
+  debug = require('debug')('songz');
 
 /*
   DATA SHARED WITH OTHER SCRIPTS ON THE SERVER
@@ -24,17 +25,17 @@ io.sockets.on('connection', function(socket){
     game_id: null,
     name: "Anonymous"
   };
-  console.log("[connect]".magenta +" "+ socket.id.cyan);
+  debug("[connect]".magenta +" "+ socket.id);
 
   // send him his socket ID
-  console.log("→ socket_id".magenta, socket.id.yellow);
+  debug("→ socket_id".magenta +" "+ socket.id);
   socket.emit("socket_id", socket.id);
 
   /*
     SOCKET DISCONNECTED
    */
   socket.on('disconnect', function(){
-    console.log("[disconnect]".magenta +" "+ socket.id.cyan);
+    debug("[disconnect]".magenta +" "+ socket.id);
     
     // user leave the current game
     Games.user_leaves_game(songz, socket);
@@ -47,13 +48,13 @@ io.sockets.on('connection', function(socket){
     JOIN A GAME
    */
   socket.on('join_game', function(data){
-    console.log("← join_game".magenta +" "+ socket.id.cyan);
+    debug("← join_game".magenta +" "+ socket.id);
 
     var game_id = data.game_id;
     
     // check that user isn't already in another game
     if( songz.users[socket.id].game_id!=null ){
-      console.log("User already playing".red);
+      debug("User already playing".red);
       Games.user_leaves_game(songz, socket);
     }
 
@@ -62,7 +63,7 @@ io.sockets.on('connection', function(socket){
 
     // check that the user isn't already in this game
     if( typeof(songz.games[game_id].players[socket.id])!='undefined' ){
-      console.log("User already in game !".red);
+      debug("User already in game !".red);
       return;
     }
 
@@ -71,10 +72,10 @@ io.sockets.on('connection', function(socket){
     songz.games[game_id].players[socket.id].score = 0;
 
     // console log
-    console.log(songz.users[socket.id].name + " has joined the game # "+game_id);
+    console.log(songz.users[socket.id].name + " has joined the game # " + game_id.yellow);
 
     // preload first song
-    console.log("→ preload_song".magenta, songz.games[game_id].songs[0].song_stream_url, game_id.yellow);
+    debug("→ preload_song".magenta, songz.games[game_id].songs[0].song_stream_url, game_id.yellow);
     socket.emit("preload_song", {
       preload: songz.games[game_id].songs[0].song_stream_url
     });
@@ -89,7 +90,7 @@ io.sockets.on('connection', function(socket){
     
     // update players list
     var data = Games.players_list(songz, game_id);
-    console.log("→ players_list".magenta, data, game_id);
+    debug("→ players_list".magenta, data, game_id.yellow);
     io.sockets.in(game_id).emit('players_list', data);
   });
 
@@ -97,7 +98,7 @@ io.sockets.on('connection', function(socket){
     LEAVE A GAME
    */
   socket.on('leave_game', function(data){
-    console.log("← leave_game".magenta +" "+ socket.id.cyan);
+    debug("← leave_game".magenta, socket.id);
     Games.user_leaves_game(songz, socket);
   });
 
@@ -105,7 +106,7 @@ io.sockets.on('connection', function(socket){
     CHANGE USER'S NAME
    */
   socket.on('change_name', function(data){
-    console.log("← change_name".magenta +" "+ socket.id.cyan);
+    debug("← change_name".magenta, socket.id);
 
     // update server's user info
     var old_name = songz.users[socket.id].name;
@@ -125,7 +126,7 @@ io.sockets.on('connection', function(socket){
       
       // update players list
       var data = Games.players_list(songz, songz.users[socket.id].game_id);
-      console.log("→ players_list".magenta, data, songz.users[socket.id].game_id);
+      debug("→ players_list".magenta, data, songz.users[socket.id].game_id.yellow);
       io.sockets.in(songz.users[socket.id].game_id).emit('players_list', data);
     }
 
@@ -135,7 +136,7 @@ io.sockets.on('connection', function(socket){
     GUESSED THE ARTIST OR NAME OF THE SONG
    */
   socket.on('guessed', function(field){
-    console.log("← guessed".magenta +" "+ field +" "+ socket.id.cyan);
+    debug("← guessed".magenta, field, socket.id);
     Games.user_guessed(songz, socket, field);
   });
 
