@@ -117,7 +117,9 @@ module.exports = {
       // 
       play: song.song_stream_url,
       duration: config.game.song_duration,
-      players: this.players_list(songz, game_id)
+      players: this.players_list(songz, game_id),
+      nb_songs_left: songz.games[game_id].songs.length,
+      nb_songs_total: config.game.nb_songs
     }
     debug("→ play_song".magenta, song.song_artist+" - "+song.song_name, game_id.yellow);
     songz.io.sockets.in(game_id).emit("play_song", data);
@@ -225,15 +227,17 @@ module.exports = {
     songz.games[game_id].players[socket.id].score++;
 
     // save position
-    songz.games[game_id].players_positions.push(socket.id);
-    var position = songz.games[game_id].players_positions.length;
+    if (songz.games[game_id].players_positions.indexOf(socket.id)==-1){
+      songz.games[game_id].players_positions.push(socket.id);
+      var position = songz.games[game_id].players_positions.length;
 
-    // send player's position
-    debug("→ player_position".magenta, position, game_id.yellow);
-    songz.io.sockets.in(game_id).emit("player_position", {
-      socket_id: socket.id,
-      position: position
-    });
+      // send player's position
+      debug("→ player_position".magenta, position, game_id.yellow);
+      songz.io.sockets.in(game_id).emit("player_position", {
+        socket_id: socket.id,
+        position: position
+      });
+    }
   }
 
 }

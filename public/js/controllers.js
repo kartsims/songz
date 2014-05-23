@@ -48,6 +48,7 @@ angular.module('appControllers', []).
   controller('gameController', function($scope, mySocket, $http, $routeParams, $location, $timeout) {
 
     $scope.loading = true;
+    $scope.blockAnswer = true;
 
     // change my username
     $scope.change_name = function(){
@@ -121,11 +122,16 @@ angular.module('appControllers', []).
         jPlayer("setMedia", {mp3: url}).
         jPlayer("play");
       
+      // enable answering form
+      $scope.blockAnswer = false;
       $('#my-guess').val('').focus();
+
       $('.guessed').removeClass('active');
 
+      // end the song in X seconds and disable answering form
       setTimeout(function(){
         $scope.jplayer.jPlayer("stop");
+        $scope.blockAnswer = true;
       }, duration);
     }
 
@@ -173,12 +179,19 @@ angular.module('appControllers', []).
       if(field!='artist' && field!='name'){
         return;
       }
+
+      // +1 point
+      $('#game-players li.is_me .score').html( parseInt($('#game-players li.is_me .score').html())+1 );
+      
+      // tooltip
       $('#guessed-'+field)
         .tooltip('show')
         .addClass("active");
       $timeout(function(){
         $('#guessed-'+field).tooltip('hide');
       }, 1000);
+
+      // notify the server
       console.log("→ guessed ("+field+")");
       mySocket.emit('guessed', field);
     }
@@ -274,11 +287,8 @@ angular.module('appControllers', []).
       $scope.nb_online = data.players.length;
       // reset guess field
       $('#my-guess').val('');
-
-      // TODO: move these
-      $scope.song.name = data.name;
-      $scope.song.artist = data.artist;
-      // 
+      // show nb songs left
+      $scope.nb_songs = (data.nb_songs_total-data.nb_songs_left) + ' / ' + data.nb_songs_total;
     });
 
     // preload a song

@@ -31,13 +31,13 @@ form.pick-theme {
 
 /* PLAY THE GAME */
 ul.tracklist li {
-	line-height: 6px;
+	line-height: 1;
 	clear: left;
 	padding-top: 14px;
 }
 ul.tracklist strong {
 	display: block;
-	line-height: 30px;
+	padding: 5px 0;
 }
 ul.tracklist img {
 	float: left;
@@ -75,16 +75,19 @@ form.guess-song {
 }
 #notifications {
 	font-size: .9em;
-	line-height: .9;
+	line-height: 1.1;
 }
 #notifications li {
 	padding-bottom: .6em;
+	padding-left: 36px;
+	position: relative;
 }
 #notifications .date {
+	position: absolute;
+	top: 0;
+	left: 0;
 	font-size: .9em;
 	color: #e3f2f4;
-	width: 36px;
-	display: inline-block;
 }
 .guessed {
 	display: inline-block;
@@ -106,6 +109,10 @@ form.guess-song {
 	color: #568c95;
 	padding-top: .2em;
 	text-align: left;
+}
+#nb-songs {
+	padding-bottom: 5px;
+	font-size: .9em;
 }
 
 /* RESULTS PAGE */

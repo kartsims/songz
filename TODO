@@ -1,8 +1,27 @@
-TODO !
+
+
+ PHASE 1
+=========
+
 
 - changer l'ordre des joueurs au fur et a mesure qu'ils répondent
 
-- bugfix quand le joueur répond à l'artiste et au nom de la chanson, ca met à jour sa position dans le classement
-
 - check sound preloading and sync between differents screens
 
+- vérifier que lorsqu'un joueur prend la partie en cours de route il a un écran pour patienter
+
+- ajouter un classement à l'affichage des résultats
+
+- bug avec la mise en gras du nom du joueur... on ne sait pas qui on est dans la liste (au premier chargement uniquement)
+
+
+
+ PHASE 2
+=========
+
+- angularjs authentication
+
+- save user credentials
+
+- save user's favorite theme
+ 
