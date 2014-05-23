@@ -67,18 +67,6 @@ angular.module('appControllers', []).
       $('#form-name').toggle();
     };
 
-    // confirm before leaving
-    $scope.$on('$locationChangeStart', function (event, next, current) {
-      if (!confirm("Are you sure you want to leave this game ?")) {
-        event.preventDefault();
-      }
-      else {
-        mySocket.emit('leave_game', {
-          id: $scope.me.id
-        });
-      }
-    });
-
     // look for saved username or pick a random one
     var username = typeof($.cookie('username'))=="undefined" ?
       "Anonymous" + Math.floor((Math.random()*100)+1) :
@@ -212,6 +200,18 @@ angular.module('appControllers', []).
           mySocket.emit('join_game', {game_id:$routeParams.game_id});
 
           $scope.notify("You joined the game");
+
+          // confirm before leaving it
+          $scope.$on('$locationChangeStart', function (event, next, current) {
+            if (!confirm("Are you sure you want to leave this game ?")) {
+              event.preventDefault();
+            }
+            else {
+              mySocket.emit('leave_game', {
+                id: $scope.me.id
+              });
+            }
+          });
         }
       }).
       error(function(data) {
@@ -289,6 +289,11 @@ angular.module('appControllers', []).
       $('#my-guess').val('');
       // show nb songs left
       $scope.nb_songs = (data.nb_songs_total-data.nb_songs_left) + ' / ' + data.nb_songs_total;
+
+      // TODO: move these (used to fuzzy compare with player's guess)
+      $scope.song.name = data.name;
+      $scope.song.artist = data.artist;
+      // 
     });
 
     // preload a song
