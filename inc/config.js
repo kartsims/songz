@@ -14,7 +14,7 @@ if (process.env.SONGZ_ENVIRONMENT=='production'){
       // time in seconds before a new game starts playing the first song
       start_timer: 4,
       // duration of songs in seconds
-      song_duration: 10,
+      song_duration: 20,
       // time in seconds between each song
       interval_timer: 5
     },
@@ -50,7 +50,7 @@ else{
       // time in seconds before a new game starts playing the first song
       start_timer: 1,
       // duration of songs in seconds
-      song_duration: 10,
+      song_duration: 30,
       // time in seconds between each song
       interval_timer: 1
     },

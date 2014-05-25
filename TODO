@@ -1,23 +1,31 @@
 
 
- PHASE 1
-=========
+ V1.0
+======
 
-
-- changer l'ordre des joueurs au fur et a mesure qu'ils répondent
-
-- check sound preloading and sync between differents screens
-
-- vérifier que lorsqu'un joueur prend la partie en cours de route il a un écran pour patienter
+- check sound preloading and sync between different screens
 
 - ajouter un classement à l'affichage des résultats
 
 - bug avec la mise en gras du nom du joueur... on ne sait pas qui on est dans la liste (au premier chargement uniquement)
 
+- Backoffice : liste des jeux en cours
+
+- a la fin d'une partie, on est redirigés vers les résultats et la popup de confirmation s'affiche
+
+- combo quand on répond à plusieurs réponses d'affilée
 
 
- PHASE 2
-=========
+
+ V1.1
+======
+
+- Backoffice : statistiques d'utilisation
+
+
+
+ V1.2
+======
 
 - angularjs authentication
 

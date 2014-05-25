@@ -53,6 +53,10 @@
             <div id="nb-songs" ng-show="nb_songs">
                 {{nb_songs}}
             </div>
+
+            <div id="please-wait" ng-hide="nb_songs">
+                Please wait a few seconds...
+            </div>
             
             <ul class="tracklist">
                 <li ng-repeat="song in songs">

@@ -114,6 +114,11 @@ form.guess-song {
 	padding-bottom: 5px;
 	font-size: .9em;
 }
+#please-wait {
+	padding-top: 20px;
+	font-size: 1.6em;
+	font-style: italic;
+}
 
 /* RESULTS PAGE */
 #game-results h4 {

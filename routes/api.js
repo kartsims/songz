@@ -2,7 +2,7 @@ var express = require('express'),
   router = express.Router(),
   config = require('../inc/config'),
   songz = require('../inc/listener'),
-  Games = require('../inc/games');
+  Game = require('../inc/game');
 
 
 /*
@@ -24,8 +24,9 @@ router.get('/join/:theme_id', function(req, res) {
   var theme_id = req.params.theme_id;
 
   // look for a game in this theme
-  var game_id = Games.find_by_theme(songz, theme_id);
-  
+  var game_id = Game.find_by_theme(songz, theme_id);
+
+    // send object containing the good game_id  
   res.send({game_id: game_id});
 });
 
@@ -42,7 +43,7 @@ router.get('/game/:id', function(req, res) {
     var theme_id = game_id.split('-')[0];
   
     // look for another game in this theme
-    var game_id = Games.find_by_theme(songz, theme_id);
+    var game_id = Game.find_by_theme(songz, theme_id);
 
     // send object containing the good game_id
     res.send({game_id:game_id});
