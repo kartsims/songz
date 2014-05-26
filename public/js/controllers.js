@@ -12,6 +12,39 @@ angular.module('appControllers', []).
   }).
 
   /*
+    AUTH FACTORY
+   */
+  factory('Auth', function($http, $rootScope, $cookieStore){
+
+    var user = {
+      name: $cookieStore.get('user.name')
+    };
+
+    // default user
+    if (!user.name){
+      user.name = "Anonymous" + Math.floor((Math.random()*100)+1);
+    }
+
+    return {
+        user: user,
+        change_name: function(name, socket){
+          this.user.name = name;
+
+          // store client-side
+          $cookieStore.put('user.name', this.user.name);
+
+          // sync client-side data with server
+          console.log("→ change_name", this.user.name);
+          socket.emit('change_name', {
+            name: this.user.name
+          });
+        }
+    };
+
+  }).
+
+
+  /*
     HOME PAGE
    */
   controller('mainController', function($scope, $http, $location) {
@@ -45,38 +78,24 @@ angular.module('appControllers', []).
   /*
     PLAY THE GAME
    */
-  controller('gameController', function($scope, mySocket, $http, $routeParams, $location, $timeout) {
+  controller('gameController', function($scope, mySocket, $http, $routeParams, $location, $timeout, Auth) {
 
     $scope.loading = true;
     $scope.blockAnswer = true;
+    $scope.me = Auth.user;
 
     // change my username
     $scope.change_name = function(){
-      console.log("→ change_name", $scope.me.name);
-      mySocket.emit('change_name', {
-        id: $scope.me.id,
-        name: $scope.me.name
-      });
-      $.cookie("username", $scope.me.name);
+      Auth.change_name($scope.me.name, mySocket);
       $scope.toggle_name_form();
       return false;
-    };
+    }
 
-    // hide "change my name" form
+    // show/hide "change my name" form
     $scope.toggle_name_form = function(){
       $('#form-name').toggle();
     };
-
-    // look for saved username or pick a random one
-    var username = typeof($.cookie('username'))=="undefined" ?
-      "Anonymous" + Math.floor((Math.random()*100)+1) :
-      $.cookie('username');
-
-    // save username
-    $scope.me = {
-      name: username
-    };
-    $scope.change_name();
+    $scope.toggle_name_form();
 
     // display a notification
     $scope.notify = function(html){
@@ -224,14 +243,6 @@ angular.module('appControllers', []).
     /*
       SOCKET CUSTOM EVENTS
      */
-
-    // get my socket ID
-    $scope.socket_id = null;
-    mySocket.forward('socket_id', $scope);
-    $scope.$on('socket:socket_id', function (ev, data) {
-      console.log('← socket_id', data);
-      $scope.socket_id = data;
-    });
 
     // update users list
     $scope.players = [];

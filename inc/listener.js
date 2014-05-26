@@ -25,11 +25,6 @@ io.sockets.on('connection', function(socket){
   songz.users[socket.id] = new User(socket);
   debug("[connect]".magenta +" "+ socket.id);
 
-  // send him his socket ID
-  debug("→ socket_id".magenta +" "+ socket.id);
-  socket.emit("socket_id", socket.id);
-  // TODO: remove this shit!
-
   /*
     SOCKET DISCONNECTED
    */
@@ -38,7 +33,7 @@ io.sockets.on('connection', function(socket){
     
     // user leave the current game
     var user = songz.users[socket.id];
-    if (user.game_id!=null){
+    if( user.game_id!=null && typeof(songz.games[user.game_id])!='undefined' ){
       songz.games[user.game_id].user_leaves(socket);
     }
     
@@ -56,7 +51,7 @@ io.sockets.on('connection', function(socket){
       user = songz.users[socket.id];
     
     // check that user isn't already in another game
-    if( user.game_id!=null ){
+    if( user.game_id!=null && typeof(songz.games[user.game_id])!='undefined' ){
       debug("User already playing".red);
       game.user_leaves(socket);
     }

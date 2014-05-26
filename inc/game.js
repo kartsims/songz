@@ -145,7 +145,6 @@ Game.prototype.finish = function(){
   
   // remove from global object
   delete this.songz.games[this.id];
-  // TODO: test this !
 };
 
 /*
@@ -157,7 +156,7 @@ Game.prototype.user_leaves = function(user){
   delete this.players[user.id];
   
   // remove game if everyone is gone !
-  if( this.players.length==0 ){
+  if( Object.keys(this.players).length==0 ){
     this.finish();
   }
 

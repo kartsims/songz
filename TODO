@@ -5,8 +5,6 @@
 
 - check sound preloading and sync between different screens
 
-- ajouter un classement à l'affichage des résultats
-
 - bug avec la mise en gras du nom du joueur... on ne sait pas qui on est dans la liste (au premier chargement uniquement)
 
 - combo quand on répond à plusieurs réponses d'affilée
@@ -18,6 +16,7 @@
 
 - Backoffice : statistiques d'utilisation
 
+- Faire des stats pour avoir un taux de bonne réponse pour tel ou tel son
 
 
  V1.2
@@ -28,4 +27,12 @@
 - save user credentials
 
 - save user's favorite theme
- 
+
+- allow user to make some playlists
+	> integrate itunes api
+	> integrate deezer api
+	> integrate soundcloud api
+
+- allow users to report a song (if title is missing or wrong)
+
+- allow users to make a private game, scheduled, with email notifications
