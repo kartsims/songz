@@ -203,6 +203,9 @@ angular.module('appControllers', []).
 
           // confirm before leaving it
           $scope.$on('$locationChangeStart', function (event, next, current) {
+            if ($scope.loading){
+              return;
+            }
             if (!confirm("Are you sure you want to leave this game ?")) {
               event.preventDefault();
             }
@@ -316,6 +319,7 @@ angular.module('appControllers', []).
     mySocket.forward('game_finished', $scope);
     $scope.$on('socket:game_finished', function (ev, data) {
       console.log('← game_finished', data);
+      $scope.loading = true;
       $location.url('/results/'+data);
     });
 

@@ -1,0 +1,30 @@
+extends layout
+
+block content
+  .row
+    .col-xs-12
+      h1 Admin
+  .row
+    .col-xs-4
+      h4 Themes
+      p: strong Total: #{Object.keys(themes).length}
+      ul
+        each theme in themes
+          li= theme.name + " (" + theme.nb_games + ")"
+    .col-xs-4
+      h4 Games
+      p: strong Total: #{games.length}
+      ul
+        each game in games
+          li
+            a(href='/play/'+game.id)= themes[game.theme_id].name
+            | <br/> Nb players : #{game.nb_players}
+            | <br/> Nb songs left : #{game.nb_songs_left}
+            | <br/> Started : #{game.started_at}
+    .col-xs-4
+      h4 Users
+      p: strong Total: #{users.length}
+      ul
+        each user in users
+          li= user.name
+  //- pre #{error.stack}

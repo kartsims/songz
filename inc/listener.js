@@ -127,7 +127,7 @@ io.sockets.on('connection', function(socket){
     });
 
     // if user has a game running
-    if( user.game_id!=null ){
+    if( user.game_id!=null && typeof(songz.games[user.game_id])!='undefined' ){
 
       // notify others of the changed name
       socket.broadcast.to(user.game_id).emit('changed_name', names);

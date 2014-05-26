@@ -9,10 +9,6 @@
 
 - bug avec la mise en gras du nom du joueur... on ne sait pas qui on est dans la liste (au premier chargement uniquement)
 
-- Backoffice : liste des jeux en cours
-
-- a la fin d'une partie, on est redirigés vers les résultats et la popup de confirmation s'affiche
-
 - combo quand on répond à plusieurs réponses d'affilée
 
 

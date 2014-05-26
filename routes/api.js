@@ -1,7 +1,6 @@
 var express = require('express'),
   router = express.Router(),
   config = require('../inc/config'),
-  songz = require('../inc/listener'),
   Game = require('../inc/game');
 
 
@@ -11,7 +10,7 @@ var express = require('express'),
 router.get('/home', function(req, res) {
   req.db.get('themes').find({}, function (err, docs){
     res.send({
-      nb_online: Object.keys(songz.users).length,
+      nb_online: Object.keys(req.songz.users).length,
       themes: docs
     });
   });
@@ -24,7 +23,7 @@ router.get('/join/:theme_id', function(req, res) {
   var theme_id = req.params.theme_id;
 
   // look for a game in this theme
-  var game_id = Game.find_by_theme(songz, theme_id);
+  var game_id = Game.find_by_theme(req.songz, theme_id);
 
     // send object containing the good game_id  
   res.send({game_id: game_id});
@@ -38,12 +37,12 @@ router.get('/game/:id', function(req, res) {
   var game_id = req.params.id;
 
   // game doesn't exist, find a new one on this theme
-  if( typeof(songz.games[game_id])=='undefined' ){
+  if( typeof(req.songz.games[game_id])=='undefined' ){
 
     var theme_id = game_id.split('-')[0];
   
     // look for another game in this theme
-    var game_id = Game.find_by_theme(songz, theme_id);
+    var game_id = Game.find_by_theme(req.songz, theme_id);
 
     // send object containing the good game_id
     res.send({game_id:game_id});

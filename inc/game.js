@@ -12,6 +12,7 @@ var Game = function(songz, theme_id){
   this.results = [];
   this.players_positions = [];
   this.songz = songz;
+  this.started_at = Date.now();
 
   // pick X songs
   var x = this;
@@ -127,6 +128,7 @@ Game.prototype.finish = function(){
     db_record = {
       _id: this.id,
       theme_id: this.theme_id,
+      started_at: this.started_at,
       finished_at: Date.now(),
       players: []
     };
@@ -139,10 +141,10 @@ Game.prototype.finish = function(){
   db.get('results').insert(db_record);
 
   // console log
-  console.log("Game finished", this.id.yellow, db_record);
+  console.log("Game finished", this.id.yellow);
   
   // remove from global object
-  delete this.game_collection[this.id];
+  delete this.songz.games[this.id];
   // TODO: test this !
 };
 

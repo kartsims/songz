@@ -1,12 +1,13 @@
 // express basics
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
+var express = require('express'),
+  path = require('path'),
+  cookieParser = require('cookie-parser'),
+  bodyParser = require('body-parser');
 
 // my additions
-var config = require('./inc/config');
-var colors = require('colors');
+var config = require('./inc/config'),
+  listener = require('./inc/listener'),
+  colors = require('colors');
 
 var app = express();
 app.use(cookieParser());
@@ -26,15 +27,16 @@ app.use(function(req,res,next){
   next();
 });
 
-// launch the socket listener
+// pass the socket listener to Express
 app.use(function(req,res,next){
-  var listener = require('./inc/listener');
   req.songz = listener;
   next();
 });
 
 // routes
-app.use('/api', require('./routes/api'));
+app
+  .use('/api', require('./routes/api'))
+  .use('/admin', require('./routes/admin'));
 
 
 // Use res.sendfile, as it streams instead of reading the file into memory.
